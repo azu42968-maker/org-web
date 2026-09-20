@@ -5,7 +5,7 @@
   var ROSTER = [];
   var loadFailed = false;
 
-  var SIGNED_IDS = [11075924, 60698133, 52610289, 68370688];
+  var SIGNED_IDS = [11075924, 60698133, 52610289, 68370688, 9921820];
 
   var ICON_BASE = "files/assets/legends/";
   var LEGENDS = {
