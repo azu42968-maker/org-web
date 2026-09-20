@@ -385,7 +385,7 @@ body::before{
 }
 .ticker::before{background:#050703;border-block:2px solid var(--acid);box-shadow:var(--glow-md)}
 .ticker-track span{color:var(--acid);text-shadow:0 0 16px rgba(0,255,0,.75)}
-.ticker-track span:nth-of-type(even){color:transparent;-webkit-text-stroke:1.5px #fff;text-shadow:none}
+.ticker-track span:nth-of-type(even){color:var(--hazard);-webkit-text-stroke:0;text-shadow:0 0 16px rgba(255,179,0,.75)}
 .ticker-track i{box-shadow:var(--glow-sm)}
 
 /* ---------- 7 · Títulos de sección ---------------------------------------- */
