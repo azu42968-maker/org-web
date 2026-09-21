@@ -7,6 +7,10 @@
 
   var SIGNED_IDS = [11075924, 60698133, 52610289, 68370688, 9921820];
 
+  // Jugadores con más de una cuenta (ej. PC + PS5): sus stats se suman para mostrarse como un solo jugador.
+  // Clave = id que usa el roster/JSON local, valor = lista de ids adicionales a combinar.
+  var ALT_ACCOUNTS = { 42483385: [53543934] };
+
   var ICON_BASE = "files/assets/legends/";
   var LEGENDS = {
     3: { name: "Bödvar", slug: "bodvar" }, 4: { name: "Cassidy", slug: "cassidy" },
@@ -217,6 +221,61 @@
     return attempt(1);
   }
 
+  // Suma los legends de dos o más cuentas (mismo legend_id => se suman games/wins).
+  function combineLegends(legendLists) {
+    var byId = {};
+    legendLists.forEach(function (list) {
+      (list || []).forEach(function (l) {
+        if (!byId[l.id]) {
+          byId[l.id] = { id: l.id, name: l.name, games: 0, wins: 0 };
+        }
+        byId[l.id].games += l.games || 0;
+        byId[l.id].wins += l.wins || 0;
+      });
+    });
+    var out = [];
+    for (var k in byId) out.push(byId[k]);
+    return out.sort(function (a, b) { return b.games - a.games; });
+  }
+
+  // Trae uno o varios brawlhalla_id y devuelve un único jugador con games/wins/legends sumados.
+  // ELO/tier/rank no se pueden sumar entre cuentas: se usa el dato de la primera cuenta que tenga.
+  function fetchLiveForRoster(id) {
+    var altIds = ALT_ACCOUNTS[id] || [];
+    if (!altIds.length) return fetchLivePlayerWithRetry(id);
+
+    var allIds = [id].concat(altIds);
+    return Promise.all(allIds.map(function (accId) {
+      return fetchLivePlayerWithRetry(accId).catch(function () { return null; });
+    })).then(function (results) {
+      var found = results.filter(Boolean);
+      if (!found.length) throw new Error("all accounts failed");
+
+      var primary = found[0];
+      var combined = {
+        brawlhalla_id: id,
+        name: primary.name,
+        region: null, tier: null, rating: null, peak_rating: null, global_rank: null,
+        games: 0, wins: 0, level: null, xp: 0,
+        games_ranked: 0, wins_ranked: 0,
+        legends: combineLegends(found.map(function (f) { return f.legends; }))
+      };
+      found.forEach(function (f) {
+        combined.games += f.games || 0;
+        combined.wins += f.wins || 0;
+        combined.xp += f.xp || 0;
+        combined.games_ranked += f.games_ranked || 0;
+        combined.wins_ranked += f.wins_ranked || 0;
+        if (f.rating !== null && (combined.rating === null || f.rating > combined.rating)) {
+          combined.rating = f.rating; combined.peak_rating = f.peak_rating;
+          combined.tier = f.tier; combined.region = f.region; combined.global_rank = f.global_rank;
+        }
+        if (f.level !== null && (combined.level === null || f.level > combined.level)) combined.level = f.level;
+      });
+      return combined;
+    });
+  }
+
   function init() {
     var body = document.getElementById("stats-body");
     if (!body) return;
@@ -271,7 +330,7 @@
             '<span class="signed-card-pending">Looking up live stats…</span>';
 
           if (!pendingSignedLookups[id]) {
-            pendingSignedLookups[id] = fetchLivePlayerWithRetry(id).then(function (entry) {
+            pendingSignedLookups[id] = fetchLiveForRoster(id).then(function (entry) {
               ROSTER.push(entry);
               return entry;
             });
@@ -425,7 +484,7 @@
 
       function refreshOne(p) {
         var idx = ROSTER.indexOf(p);
-        return fetchLivePlayerWithRetry(p.brawlhalla_id).then(function (fresh) {
+        return fetchLiveForRoster(p.brawlhalla_id).then(function (fresh) {
           ROSTER[idx] = mergeEntry(ROSTER[idx], fresh);
           scheduleRender();
         }).catch(function () {});
