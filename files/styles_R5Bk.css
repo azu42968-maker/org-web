@@ -14,20 +14,14 @@ footer{border-top:1px solid var(--line);padding:56px var(--pad) 34px;display:gri
 @media (max-width:980px){.menu-toggle{display:block}.site-header nav{position:fixed;inset:0;background:#090909;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:80px var(--pad);gap:18px;font-size:1.4rem;transform:translateX(100%);transition:transform .3s}.partners-view .site-header nav{color:#00ff00}.partners-view .site-header:has(nav.open) .menu-toggle span{background:#fff}.site-header nav.open{transform:none}.site-header nav .store-link{margin-top:15px}.menu-toggle{z-index:2}.hero-rail{gap:24px}.medal-section, .about-section{grid-template-columns:1fr}.medal-grid{margin-top:10px}.partner-marquee, .stats-grid{grid-template-columns:repeat(2,1fr)}.partners-clippers-row{grid-template-columns:1fr!important}.partner-marquee[aria-label="Acid partners"],.partner-marquee[aria-label="Acid ascended clippers"]{grid-template-columns:repeat(2,1fr)!important}.partner-marquee[aria-label="Acid partners"] a,.partner-marquee[aria-label="Acid ascended clippers"] a,.partner-marquee[aria-label="Acid ascended clippers"] div{width:100%!important;height:auto!important;min-height:170px}.about-mark{max-width:420px}.community-card{min-height:260px}}
 @media (max-width:680px){.site-header{height:68px}.brand-mark{width:34px;height:34px}.hero{min-height:760px;height:auto;padding-top:125px;padding-bottom:60px}.hero-art{background-position:64% center;opacity:.75}.hero h1{font-size:clamp(3.3rem,17vw,5.3rem)}.hero-lede{max-width:90%}.hero-rail{top:88px;gap:18px 28px}.hero-rail strong{font-size:1.5rem}.section{padding-top:80px;padding-bottom:80px}.section-head{align-items:flex-start;flex-direction:column}.medal-section{padding-top:70px;padding-bottom:70px}.medal-grid{grid-template-columns:1fr 1fr}.filters{justify-content:flex-start}.partner-marquee,.stats-grid{grid-template-columns:1fr 1fr}.partner-marquee a{min-height:135px}.partner-marquee[aria-label="Acid partners"],.partner-marquee[aria-label="Acid ascended clippers"]{grid-template-columns:1fr!important}.partner-marquee[aria-label="Acid partners"] a,.partner-marquee[aria-label="Acid ascended clippers"] a,.partner-marquee[aria-label="Acid ascended clippers"] div{width:100%!important;min-height:150px}.stats-card{min-height:120px}.about-section{padding-top:80px;padding-bottom:80px}.store-cta .button{align-self:flex-start}footer{grid-template-columns:1fr}footer>p{grid-column:1}.chat-launch span{display:none}.chat-launch{right:16px;bottom:16px;padding:8px}.chat-panel{right:16px;bottom:80px}.music-launch{left:16px;bottom:16px;width:44px;height:44px}.music-panel{left:16px;bottom:70px}dialog form{grid-template-columns:1fr}dialog label:nth-of-type(4){grid-column:1}.ticker-track{animation-duration:20s}}
 
-
-
 .social-section{max-width:var(--max);margin:0 auto 110px;padding:100px var(--pad);background:#0d0d0d;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.social-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.social-card{border:1px solid var(--line);background:#070707;min-width:0}.social-card>header{min-height:82px;padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}.social-card>header>div{display:flex;align-items:center;gap:12px}.social-card>header>div>span{width:42px;height:42px;display:grid;place-items:center;background:#171717;border:1px solid #333;font-size:1.2rem}.social-card>header>div>span svg{width:22px;height:22px;fill:#fff}.social-card header p{display:grid;margin:0}.social-card header small{color:#737373}.social-card header a{color:var(--gold);font-size:.68rem;font-weight:850;text-transform:uppercase;letter-spacing:.09em}.social-tiktok{position:relative;overflow:hidden}.social-tiktok:after{content:"CLIPS / CULTURE / COMPETITION";position:absolute;bottom:-19px;right:-8px;font-size:3rem;font-weight:950;color:rgba(255,255,255,.025);white-space:nowrap;pointer-events:none}
 @media (max-width:760px){.social-grid{grid-template-columns:1fr}.social-card>header{align-items:flex-start}.social-card>header>a{margin-top:8px}.social-section{margin-bottom:80px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.ticker-track{animation-duration:26s!important;animation-iteration-count:infinite!important}}
-
-
 
 .player-visual .legend-icon{position:relative;z-index:2;width:62%;height:62%;object-fit:contain;opacity:0;transform:scale(.92);transition:opacity .25s,transform .25s;filter:drop-shadow(0 18px 32px rgba(0,0,0,.62))}.player-card.has-legend-icon .legend-icon{opacity:1;transform:scale(1)}.player-card.has-legend-icon .player-default-mark{display:none}
 .player-card.has-jex-stats:is(:hover,:focus-visible,:focus-within) .player-stats{max-height:320px;opacity:1;margin-top:20px;padding-top:16px;border-color:var(--line)}
 @media (hover:none){.player-card.has-jex-stats .player-stats{max-height:320px;opacity:1;margin-top:20px;padding-top:16px;border-color:var(--line)}.player-card:hover{transform:none}}
 @media (prefers-reduced-motion:reduce){.player-card:hover,.player-card:focus-visible,.player-card:focus-within{transform:none}}
-
-
 
 .directory-actions .button[hidden]{display:none}
 .subpage .site-header{position:relative;background:#090909}.services-hero{max-width:var(--max);margin:auto;padding:100px var(--pad) 72px;display:grid;grid-template-columns:1.25fr .75fr;gap:50px;align-items:end;border-bottom:1px solid var(--line)}.services-hero h1{font-size:clamp(4rem,9vw,8.4rem);line-height:.83;letter-spacing:-.065em;text-transform:uppercase;margin:0}.services-hero h1 em{display:block;color:var(--gold-bright);font-family:Inter,sans-serif;font-style:italic;font-size:.52em;font-weight:300;text-transform:none;letter-spacing:-.01em}.commission-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.commission-card{min-height:300px;border:1px solid var(--line);background:#0e0e0e;padding:32px;display:flex;flex-direction:column;position:relative;overflow:hidden}.commission-card>span{color:var(--gold);font-size:.72rem;letter-spacing:.14em;font-weight:900}.commission-card h2{font-size:2rem;text-transform:none;letter-spacing:-.03em;margin:42px 0 10px}.commission-card p{color:#969696;max-width:500px;margin:0 0 26px}.commission-card .button{margin-top:auto;align-self:flex-start}.commission-card:after{content:attr(data-mark);position:absolute;right:-8px;top:-36px;font-size:9rem;font-weight:950;color:rgba(255,255,255,.025);pointer-events:none}.services-cta .button{flex:0 0 auto}
@@ -49,18 +43,12 @@ footer{border-top:1px solid var(--line);padding:56px var(--pad) 34px;display:gri
 .services-tab-intro .button { margin-top: 1.4rem; }
 .services-tab .commission-grid { max-width: 1500px; margin-inline: auto; }
 
-
-
 @media  (max-width: 850px) {.services-tab-intro { grid-template-columns: 1fr; }}
 
 .faq-section{max-width:var(--max);margin:auto;padding:120px var(--pad)}.faq-intro{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:end;padding-bottom:50px;border-bottom:1px solid var(--line)}.faq-intro h2{font-size:clamp(3rem,6vw,6.2rem);line-height:.88;letter-spacing:-.06em;text-transform:uppercase;margin:0}.faq-intro>p{max-width:520px;margin:0;color:#9b9b9b;font-size:1.05rem}.faq-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:32px;align-items:start}.faq-column{display:grid;gap:36px}.faq-group{border-top:3px solid var(--gold);background:#0d0d0d}.faq-group>h3{margin:0;padding:18px 22px;color:var(--gold);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;border-bottom:1px solid var(--line)}.faq-item{border-bottom:1px solid var(--line);transition:background .2s}.faq-item:last-child{border-bottom:0}.faq-item[open]{background:#131313}.faq-item summary{list-style:none;display:grid;grid-template-columns:1fr 34px;gap:18px;align-items:center;padding:22px;cursor:pointer;font-size:1rem;font-weight:800;line-height:1.3}.faq-item summary::-webkit-details-marker{display:none}.faq-item summary::marker{content:""}.faq-item summary:hover,.faq-item summary:focus-visible{color:var(--gold-bright)}.faq-item summary:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}.faq-item summary b{width:32px;height:32px;border:1px solid #3b3b3b;display:grid;place-items:center;color:var(--gold);font-size:1rem;font-weight:500;transition:transform .2s,border-color .2s}.faq-item[open] summary b{transform:rotate(180deg);border-color:var(--gold)}.faq-answer{padding:0 68px 26px 22px;color:#aaa}.faq-answer p{margin:0 0 14px}.faq-answer p:last-child{margin-bottom:0}.faq-answer a{color:var(--gold-bright);font-weight:750;border-bottom:1px solid rgba(0,255,0,.35)}.faq-answer ul{margin:10px 0 0;padding-left:20px}.faq-answer li+li{margin-top:7px}.faq-links{list-style:none!important;padding:0!important;display:grid;gap:0!important}.faq-links li{margin:0!important}.faq-links a{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid #292929}.faq-links a span{color:#888;font-weight:400;overflow-wrap:anywhere;text-align:right}
 @media (min-width:981px) and (max-width:1120px){.site-header nav{gap:18px;font-size:.76rem}}
 @media (max-width:1120px){.faq-intro{grid-template-columns:1fr}.faq-intro>p{max-width:680px}}
 @media (max-width:820px){.faq-section{padding-top:92px}.faq-columns{grid-template-columns:1fr}}
-
-
-
-
 
 @media (min-width:981px){.site-header{
     height:82px;
@@ -136,12 +124,6 @@ footer{border-top:1px solid var(--line);padding:56px var(--pad) 34px;display:gri
 .stats-controls input,.stats-controls select{height:46px;width:100%;border:1px solid #393939;background:#0d0d0d;color:var(--gold);padding:0 14px;border-radius:0;font-size:.85rem}
 .stats-controls input:focus,.stats-controls select:focus{outline:2px solid var(--gold);outline-offset:1px}
 
-
-
-
-
-
-
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-left:1px solid var(--line)}
 .stats-card{border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:150px;padding:25px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;cursor:pointer;transition:background .25s,color .25s}
 .stats-card:hover{background:var(--gold);color:#111}
@@ -152,14 +134,6 @@ footer{border-top:1px solid var(--line);padding:56px var(--pad) 34px;display:gri
 .stats-card-sub{color:#777;margin-top:5px;font-size:.85rem}
 
 .stats-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(145deg,var(--acid-bright),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.75rem;color:#08090a;flex-shrink:0}
-
-
-
-
-
-
-
-
 
 .stats-empty{padding:60px 20px;text-align:center;color:#777;font-size:.9rem}
 .stats-count{font-size:.7rem;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-top:12px}
@@ -191,21 +165,11 @@ footer{border-top:1px solid var(--line);padding:56px var(--pad) 34px;display:gri
 .stats-legend-row .stats-lg-stats{font-size:.72rem;color:#888}
 @media (max-width:760px){.stats-controls{grid-template-columns:1fr}}
 
-
-/* ==========================================================================
-   ACID · HYPER LAYER
-   Todo lo de abajo va ENCIMA del CSS original y solo cambia el "look"
-   (color, brillo, movimiento). No toca tamaños ni layout del original ni de
-   sus media queries, así que la estructura de la web queda igual.
-   Para volver al diseño anterior: borra desde aquí hasta el final del archivo.
-   ========================================================================== */
-
 @property --spin{syntax:"<angle>";inherits:false;initial-value:0deg}
 
-/* ---------- 1 · Tokens ---------------------------------------------------- */
 :root{
   --acid:#00ff00;
-  --acid-bright:#ccff00;              /* antes #1b5e20: verde oscuro casi ilegible sobre negro */
+  --acid-bright:#ccff00;              
   --hot:#ff2bd6;
   --cyan:#00e5ff;
   --line:rgba(0,255,0,.24);
@@ -215,7 +179,6 @@ footer{border-top:1px solid var(--line);padding:56px var(--pad) 34px;display:gri
   --stripe:repeating-linear-gradient(135deg,var(--hazard) 0 10px,#000 10px 20px);
 }
 
-/* ---------- 2 · Base: selección, scroll, ambiente ------------------------- */
 ::selection{background:var(--acid);color:#000}
 html{scrollbar-color:var(--acid) #060806}
 ::-webkit-scrollbar{width:12px;height:12px}
@@ -224,19 +187,19 @@ html{scrollbar-color:var(--acid) #060806}
 a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--acid-bright);outline-offset:3px}
 
 body{background:var(--black)}
-/* antes: background-attachment:fixed en el body (obliga a repintar en cada scroll). Ahora es una capa fija propia. */
+
 html::before{
   content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:
     radial-gradient(60vw 45vw at 100% 0,rgba(0,255,0,.12),transparent 60%),
     radial-gradient(50vw 40vw at 0 100%,rgba(255,179,0,.07),transparent 60%);
 }
-/* líneas de escáner sobre toda la página */
+
 body::before{
   content:"";position:fixed;inset:0;z-index:90;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.14) 2px 3px);
 }
-/* barra de progreso de scroll (solo navegadores que soportan scroll-timeline) */
+
 @supports (animation-timeline:scroll()){
   body::after{
     content:"";position:fixed;left:0;top:0;width:100%;height:4px;z-index:95;
@@ -247,7 +210,7 @@ body::before{
   }
 }
 @keyframes scroll-progress{to{transform:scaleX(1)}}
-/* respaldo (Firefox y otros): la barra la mueve scroll-progress.js con la variable --scroll */
+
 @supports not (animation-timeline:scroll()){
   body::after{
     content:"";position:fixed;left:0;top:0;width:100%;height:4px;z-index:95;
@@ -257,13 +220,12 @@ body::before{
   }
 }
 
-/* ---------- 3 · Header ---------------------------------------------------- */
 .brand{text-shadow:0 0 18px rgba(0,255,0,.65)}
 .brand-mark img{filter:drop-shadow(0 0 10px rgba(0,255,0,.85));transition:transform .35s cubic-bezier(.2,.9,.3,1.4)}
 .brand:hover .brand-mark img{transform:rotate(-10deg) scale(1.1)}
 .site-header.scrolled{border-bottom-color:rgba(0,255,0,.55);box-shadow:0 10px 40px -12px rgba(0,255,0,.45)}
 .site-header nav a:hover,.site-header nav a:focus-visible{color:var(--acid-bright);text-shadow:0 0 14px rgba(0,255,0,.7)}
-/* "Coming soon" / tienda: ámbar de peligro, sin importar si es <a>, <span> o <button> */
+
 .site-header .store-link,
 .site-header nav a.store-link{background:var(--hazard);color:#000;border-color:var(--hazard);font-weight:900;box-shadow:0 0 22px rgba(255,179,0,.55);transition:background .2s,box-shadow .2s,transform .2s}
 .site-header nav a.store-link:hover,.site-header nav a.store-link:focus-visible{background:#ffc933;border-color:#ffc933;color:#000;text-shadow:none;box-shadow:0 0 44px rgba(255,179,0,.85);transform:translateY(-2px)}
@@ -277,7 +239,6 @@ body::before{
   .site-header nav#site-nav a.store-link:hover{background:#ffc933;border-color:#ffc933;box-shadow:0 0 44px rgba(255,179,0,.85)}
 }
 
-/* ---------- 4 · Hero: el momento memorable -------------------------------- */
 .hero-art{
   filter:saturate(1.25) contrast(1.15) brightness(1.05);
   animation:hero-drift 26s ease-in-out infinite alternate;
@@ -288,7 +249,7 @@ body::before{
 }
 .hero-grid{background-image:none;overflow:hidden}
 .hero-grid::before{
-  content:"";position:absolute;inset:-72px 0 0 -72px;   /* 72px extra arriba/izquierda = 1 celda, para el bucle sin costuras */
+  content:"";position:absolute;inset:-72px 0 0 -72px;   
   background-image:
     linear-gradient(rgba(0,255,0,.10) 1px,transparent 1px),
     linear-gradient(90deg,rgba(0,255,0,.10) 1px,transparent 1px);
@@ -298,14 +259,13 @@ body::before{
 }
 @keyframes grid-pan{to{transform:translate(72px,72px)}}
 
-/* haz de luz que barre el hero */
 .hero::before{
   content:"";position:absolute;left:0;right:0;top:0;height:26svh;z-index:1;pointer-events:none;
   background:linear-gradient(180deg,transparent,rgba(0,255,0,.14) 50%,transparent);
   transform:translateY(-100%);animation:hero-beam 7s linear infinite;
 }
 @keyframes hero-beam{0%{transform:translateY(-100%)}60%,100%{transform:translateY(420%)}}
-/* baño de color ácido */
+
 .hero::after{
   content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
   background:
@@ -353,7 +313,6 @@ body::before{
 .hero-rail strong{color:#fff;text-shadow:0 0 22px rgba(0,255,0,.8);font-size:clamp(1.5rem,2.4vw,2.5rem)}
 .hero-rail span{color:var(--acid-bright)}
 
-/* ---------- 5 · Botones ---------------------------------------------------- */
 .button{
   position:relative;overflow:hidden;isolation:isolate;
   transition:transform .2s,background .2s,color .2s,box-shadow .25s,border-color .2s;
@@ -377,9 +336,8 @@ body::before{
   50%{box-shadow:0 0 52px rgba(0,255,0,.9),4px 4px 0 #006b00}
 }
 
-/* ---------- 6 · Ticker: franjas de peligro en movimiento ------------------ */
 .ticker{
-  background-size:62.2254px 96px;            /* = periodo de 44px × √2, bucle sin costuras */
+  background-size:62.2254px 96px;            
   box-shadow:0 0 50px rgba(0,255,0,.35);
   z-index:2;
 }
@@ -388,7 +346,6 @@ body::before{
 .ticker-track span:nth-of-type(even){color:var(--hazard);-webkit-text-stroke:0;text-shadow:0 0 16px rgba(255,179,0,.75)}
 .ticker-track i{box-shadow:var(--glow-sm)}
 
-/* ---------- 7 · Títulos de sección ---------------------------------------- */
 .section h2,.medal-section h2,.about-section h2,.partners-section h2,
 .faq-intro h2,.services-tab-intro h2,.services-hero h1{
   text-shadow:.035em .035em 0 rgba(0,255,0,.38);
@@ -410,7 +367,6 @@ body::before{
 .section-head .text-link{border-bottom:2px solid var(--acid);transition:color .2s,text-shadow .2s}
 .section-head .text-link:hover{color:var(--acid);text-shadow:0 0 14px rgba(0,255,0,.7)}
 
-/* ---------- 8 · Medallero ------------------------------------------------- */
 .medal-section{border-color:var(--line)}
 .medal-stat{border-left:2px solid rgba(0,255,0,.5);transition:background .25s,box-shadow .25s,border-color .25s}
 .medal-stat:hover{background:linear-gradient(90deg,rgba(0,255,0,.14),transparent);border-left-color:var(--acid);box-shadow:-10px 0 30px -12px rgba(0,255,0,.8)}
@@ -423,7 +379,6 @@ body::before{
 .medal-stat:hover strong{color:var(--acid)}
 .medal-icon{box-shadow:0 0 18px rgba(0,255,0,.5)}
 
-/* ---------- 9 · Roster ---------------------------------------------------- */
 .roster-section::before{
   background:
     linear-gradient(rgba(6,12,6,.82),rgba(6,12,6,.9)),
@@ -439,7 +394,7 @@ body::before{
   background:linear-gradient(180deg,#131a0f 0%,#0a0c08 70%);
   border-color:rgba(0,255,0,.28);
 }
-/* borde holográfico giratorio al hacer hover */
+
 .player-card::before{
   content:"";position:absolute;inset:0;z-index:6;padding:2px;pointer-events:none;
   background:conic-gradient(from var(--spin,0deg),transparent 0 55%,var(--acid) 78%,var(--acid-bright) 88%,var(--hazard) 94%,transparent 100%);
@@ -458,7 +413,6 @@ body::before{
 }
 .player-visual .legend-icon{filter:drop-shadow(0 0 22px rgba(0,255,0,.5)) drop-shadow(0 18px 32px rgba(0,0,0,.62))}
 
-/* fichajes */
 .signed-kicker{text-shadow:0 0 14px rgba(0,255,0,.6)}
 .signed-card{
   border-color:var(--acid);
@@ -471,7 +425,6 @@ body::before{
 .signed-card:hover{box-shadow:var(--glow-lg);transform:translateY(-4px) rotate(-.6deg)}
 .signed-card-badge{box-shadow:var(--glow-sm)}
 
-/* ---------- 10 · Stats y partners: celdas que "saltan" -------------------- */
 .stats-grid,.partner-marquee{border-top-color:var(--line);border-left-color:var(--line)}
 .stats-card,.partner-marquee a{
   border-right-color:var(--line);border-bottom-color:var(--line);
@@ -488,7 +441,6 @@ body::before{
 .stats-card-legend-icon{filter:drop-shadow(0 0 12px rgba(0,255,0,.5)) drop-shadow(0 4px 10px rgba(0,0,0,.55))}
 .stats-avatar,.stats-avatar-lg{box-shadow:var(--glow-sm)}
 
-/* ---------- 11 · About / comunidad ---------------------------------------- */
 .about-mark img{
   filter:contrast(1.08) drop-shadow(0 0 30px rgba(0,255,0,.55));
   animation:float-logo 7s ease-in-out infinite;
@@ -507,7 +459,6 @@ body::before{
 .community-card:hover{transform:rotate(-1.5deg) translateY(-6px)}
 @keyframes shimmer{from{background-position:0% 0}to{background-position:200% 0}}
 
-/* ---------- 12 · Social ---------------------------------------------------- */
 .social-card{transition:transform .25s,border-color .25s,box-shadow .25s}
 .social-card:hover{border-color:var(--acid);box-shadow:var(--glow-md);transform:translateY(-4px)}
 .social-card>header>div>span{border-color:var(--acid);box-shadow:var(--glow-sm)}
@@ -515,7 +466,6 @@ body::before{
 .social-card header a:hover{background:var(--acid);color:#000;box-shadow:var(--glow-sm)}
 .social-tiktok::after{color:transparent;-webkit-text-stroke:1px rgba(0,255,0,.22)}
 
-/* ---------- 13 · Servicios / comisiones ----------------------------------- */
 .commission-card{transition:transform .25s,border-color .25s,box-shadow .25s}
 .commission-card:hover{
   border-color:var(--acid);transform:translateY(-6px);
@@ -524,7 +474,6 @@ body::before{
 .commission-card>span{text-shadow:0 0 12px rgba(0,255,0,.7)}
 .commission-card::after{color:transparent;-webkit-text-stroke:1px rgba(0,255,0,.14)}
 
-/* ---------- 14 · FAQ ------------------------------------------------------- */
 .faq-group{border-top:4px solid var(--acid);box-shadow:0 -10px 40px -18px rgba(0,255,0,.6)}
 .faq-group>h3{text-shadow:0 0 12px rgba(0,255,0,.6)}
 .faq-item[open]{background:linear-gradient(90deg,rgba(0,255,0,.09),#131313 40%);box-shadow:inset 4px 0 0 var(--acid)}
@@ -534,7 +483,6 @@ body::before{
 .faq-item summary:hover b{border-color:var(--acid);box-shadow:var(--glow-sm)}
 .faq-item[open] summary b{background:var(--acid);color:#000}
 
-/* ---------- 15 · Flotantes: música y chat --------------------------------- */
 .chat-launch,.music-launch{animation:ring-pulse 2.2s ease-out infinite}
 .music-launch{animation-delay:1.1s}
 @keyframes ring-pulse{
@@ -555,7 +503,6 @@ body::before{
 .music-mute{transition:background .2s,color .2s,box-shadow .2s}
 .music-mute:hover{background:var(--acid);color:#000;box-shadow:var(--glow-sm)}
 
-/* ---------- 16 · Modal de contacto ---------------------------------------- */
 dialog{
   border:1px solid var(--acid);
   box-shadow:0 0 0 1px rgba(0,255,0,.2),0 0 80px rgba(0,255,0,.25),0 30px 100px #000;
@@ -571,9 +518,8 @@ dialog input:focus,dialog select:focus,dialog textarea:focus,
   box-shadow:0 0 0 3px rgba(0,255,0,.25),0 0 22px rgba(0,255,0,.3);
 }
 
-/* ---------- 17 · Detalle de stats ----------------------------------------- */
 .stats-overlay{background:rgba(0,10,0,.78)}
-.stats-overlay.open{backdrop-filter:blur(6px) saturate(1.3)}   /* el blur solo existe mientras está abierto */
+.stats-overlay.open{backdrop-filter:blur(6px) saturate(1.3)}   
 .stats-detail{
   border:1px solid var(--acid);border-top:4px solid var(--acid);border-radius:0;
   box-shadow:0 0 0 1px rgba(0,255,0,.25),var(--glow-lg),0 30px 80px rgba(0,0,0,.7);
@@ -584,7 +530,6 @@ dialog input:focus,dialog select:focus,dialog textarea:focus,
 .stats-close{transition:background .2s,color .2s,border-color .2s}
 .stats-close:hover{background:var(--acid);border-color:var(--acid);color:#000}
 
-/* ---------- 18 · Footer ---------------------------------------------------- */
 footer{position:relative;border-top-color:transparent}
 footer::before{
   content:"";position:absolute;left:0;right:0;top:0;height:3px;
@@ -594,7 +539,6 @@ footer::before{
 .footer-brand img{filter:drop-shadow(0 0 12px rgba(0,255,0,.7))}
 .footer-brand strong{text-shadow:0 0 14px rgba(0,255,0,.6)}
 
-/* ---------- 19 · Móvil: menos peso, misma actitud ------------------------- */
 @media (max-width:680px){
   .community-card{box-shadow:8px 8px 0 #005c00,var(--glow-sm)}
   .hero-rail div{padding:8px 14px 8px 14px;backdrop-filter:none;background:rgba(0,12,0,.55)}
@@ -604,20 +548,12 @@ footer::before{
   .player-card{border-color:rgba(0,255,0,.45)}
 }
 
-/* ---------- 20 · Accesibilidad: movimiento reducido ----------------------- */
 @media (prefers-reduced-motion:reduce){
   body::after,.hero::before{display:none}
   .hero,.hero *{animation-delay:0s!important}
   .button::after{display:none}
 }
 
-
-/* ==========================================================================
-   AJUSTES · banner difuminado + trofeos verdes
-   ========================================================================== */
-
-/* Bordes del banner: se funden con el fondo en vez de cortarse en seco.
-   Si aún ves un corte en otra pantalla, mueve estos porcentajes (mayor = más abajo / más a la derecha). */
 :root{
   --art-fade-left:24%;   --art-fade-left-end:42%;
   --art-fade-top:15%;    --art-fade-top-end:31%;
@@ -640,20 +576,12 @@ footer::before{
   }
 }
 
-/* Trofeos del medallero: de morado a verde ácido (monocromo -> tinte verde, sirve con cualquier color original) */
 .medal-icon img{
   filter:grayscale(1) brightness(1.9) contrast(1.1) sepia(1) saturate(7) hue-rotate(72deg) drop-shadow(0 0 6px rgba(0,255,0,.85));
 }
 
-
-/* ==========================================================================
-   FRANJAS DE PELIGRO EN MOVIMIENTO
-   Todas corren como el texto del ticker (hacia la izquierda, misma velocidad).
-   28.2843px = periodo de la franja (20px) × √2, para que el bucle no tenga costuras.
-   ========================================================================== */
 :root{--stripe-w:28.2843px}
 
-/* barras bajo los títulos, tira de la community card y tira del modal */
 .section h2::after,.medal-section h2::after,.about-section h2::after,.partners-section h2::after,
 .faq-intro h2::after,.services-tab-intro h2::after,
 .community-card::before,dialog::before{
@@ -662,17 +590,12 @@ footer::before{
 }
 @keyframes stripe-run{to{background-position:calc(var(--stripe-w) * -1) 0}}
 
-/* borde lateral de las cards de fichajes: es vertical, así que corre hacia arriba */
 .signed-card::before{
   background-size:100% var(--stripe-w);
   animation:stripe-run-y .55s linear infinite;
 }
 @keyframes stripe-run-y{to{background-position:0 calc(var(--stripe-w) * -1)}}
 
-
-/* Con "reducir movimiento" activado, el CSS original solo deja correr el texto del ticker.
-   Las franjas de peligro siguen el mismo criterio y también corren.
-   (Para que respeten el ajuste del sistema, borra este bloque.) */
 @media (prefers-reduced-motion:reduce){
   .section h2::after,.medal-section h2::after,.about-section h2::after,.partners-section h2::after,
   .faq-intro h2::after,.services-tab-intro h2::after,
@@ -682,25 +605,15 @@ footer::before{
   }
 }
 
-
-/* Haz de luz del hero: pasa UNA sola vez al cargar la página (antes se repetía cada 7s).
-   Para que vuelva a repetirse, cambia "1 both" por "infinite". */
 .hero::before{animation:hero-beam-once 2.2s ease-in-out 1s 1 both}
 @keyframes hero-beam-once{
   from{transform:translateY(-100%)}
   to{transform:translateY(420%)}
 }
 
-
-/* TICKER
-   El ticker es un .tab-panel, y .tab-panel:not([hidden]) trae su propia animación de entrada (tab-in)
-   con más peso que mi regla .ticker. Por eso las franjas nunca corrían, y el parche de "movimiento
-   reducido" acabó repitiendo esa entrada cada 1.2s (el ticker entero parpadeaba).
-   Ahora solo entra UNA vez; las franjas quedan estáticas (solo se mueve el texto). */
 .ticker.tab-panel:not([hidden]){animation:ticker-in 3.5s cubic-bezier(.45,.05,.25,1) backwards}
 .ticker-track{will-change:transform}
-/* Entrada de la cinta: se "despliega" de izquierda a derecha, UNA sola vez cada vez que se muestra Home.
-   El inset negativo arriba/abajo evita que el clip-path recorte el brillo verde del ticker. */
+
 @keyframes ticker-in{
   from{clip-path:inset(-80px 100% -80px 0)}
   to{clip-path:inset(-80px 0 -80px 0)}
@@ -709,17 +622,12 @@ footer::before{
   .ticker.tab-panel:not([hidden]){animation-duration:3.5s!important;animation-iteration-count:1!important}
 }
 
-
-/* ==========================================================================
-   SOCIAL · el nombre de cada red como marca de agua gigante (X, TIKTOK, DISCORD…)
-   Va a la derecha, detrás del muñeco, dentro de la zona de imagen de cada card (se corta un poco por el borde).
-   ========================================================================== */
-.social-tiktok::after{content:none}            /* quita el lema viejo "CLIPS / CULTURE / COMPETITION" */
+.social-tiktok::after{content:none}            
 
 .social-render{position:relative}
 .social-render img{position:relative;z-index:1}
 .social-render::before{
-  position:absolute;left:auto;right:-.18em;bottom:-.12em;z-index:0;   /* pegado a la derecha; parte de la última letra queda fuera */
+  position:absolute;left:auto;right:-.18em;bottom:-.12em;z-index:0;   
   text-align:right;white-space:nowrap;line-height:.9;
   font-family:Oswald,Impact,"Arial Narrow",sans-serif;font-weight:900;letter-spacing:.03em;text-transform:uppercase;
   font-size:clamp(3.2rem,7vw,5.4rem);
@@ -732,8 +640,6 @@ footer::before{
   color:rgba(0,255,0,.12);-webkit-text-stroke-color:var(--acid);text-shadow:0 0 44px rgba(0,255,0,.6);
 }
 
-/* El texto va con "/ ''" para que los lectores de pantalla lo ignoren (es decoración);
-   la primera línea es el respaldo para navegadores que no entienden esa sintaxis. */
 .social-x .social-render::before{content:"X";content:"X" / "";font-size:clamp(6rem,14vw,9.5rem)}
 .social-tiktok .social-render::before{content:"TikTok";content:"TikTok" / ""}
 .social-discord .social-render::before{content:"Discord";content:"Discord" / ""}
@@ -741,9 +647,6 @@ footer::before{
 .social-twitch .social-render::before{content:"Twitch";content:"Twitch" / ""}
 .social-kofi .social-render::before{content:"Ko-fi";content:"Ko-fi" / ""}
 
-
-/* "Coming soon": cinta de peligro (franjas ámbar/negro corriendo alrededor + placa negra con el texto),
-   igual que el ticker. */
 .site-header .store-link{
   position:relative;isolation:isolate;
   background:var(--stripe);background-size:var(--stripe-w) 100%;
@@ -753,10 +656,6 @@ footer::before{
 }
 .site-header .store-link::before{content:"";position:absolute;inset:4px;z-index:-1;background:#0b0b0b}
 
-
-/* Resto de textos naranja: mismo estilo cinta de peligro que "Coming soon"
-   (marco de franjas ámbar/negro que corren + placa negra con el texto en ámbar).
-   Afecta a las etiquetas .kicker de toda la página y al valor naranja del detalle de stats. */
 .kicker,
 .stats-detail-box .stats-value.hazard{
   position:relative;isolation:isolate;
@@ -769,11 +668,6 @@ footer::before{
 .kicker{padding:7px 18px 6px 13px}
 .stats-detail-box .stats-value.hazard{display:inline-block;padding:4px 12px}
 
-
-/* ==========================================================================
-   STATS EXTENDIDAS del modal de jugador (daño, KOs, tiempos, xp por leyenda)
-   Cada leyenda con datos es un <details>: clic para desplegar.
-   ========================================================================== */
 .stats-legend{border-bottom:1px solid var(--line)}
 .stats-legend:last-child{border-bottom:none}
 .stats-legend>summary.stats-legend-row{border-bottom:none;cursor:pointer;list-style:none}
@@ -793,7 +687,6 @@ footer::before{
 .stats-lg-xpbar i{display:block;height:100%;background:var(--acid);box-shadow:0 0 10px rgba(0,255,0,.6)}
 @media (max-width:680px){.stats-lg-right{flex-direction:column;align-items:flex-end;gap:2px}.stats-lg-chevron{display:none}}
 
-/* Modal de jugador: mismo fondo que los menús (bg-nordic-winter con velo oscuro) */
 .stats-detail{
   background:
     linear-gradient(rgba(9,9,9,.9),rgba(9,9,9,.9)),
