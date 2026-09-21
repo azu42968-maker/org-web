@@ -26,7 +26,7 @@ const menuButton = document.querySelector(".menu-toggle");
 
 const nav = document.querySelector("#site-nav");
 
-const tabNames = new Set([ "home", "roster", "services", "social", "staff", "partners", "faq", "about" ]);
+const tabNames = new Set([ "home", "roster", "services", "mods", "social", "staff", "partners", "faq", "about" ]);
 
 const tabTriggers = document.querySelectorAll("[data-tab], [data-tab-link]");
 

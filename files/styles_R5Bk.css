@@ -693,3 +693,19 @@ footer::before{
     url("assets/bg-nordic-winter.webp") center/cover no-repeat,
     #0d0d0d;
 }
+
+/* ---------- MODS TAB (misma base visual que Services) ---------- */
+.mods-tab .mods-grid{max-width:1500px;margin-inline:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.mod-card{border:1px solid var(--line);background:#0e0e0e;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
+.mod-card:hover{border-color:var(--acid);transform:translateY(-6px);box-shadow:0 0 0 1px var(--acid),0 20px 60px -20px rgba(0,255,0,.55)}
+.mod-preview{aspect-ratio:16/10;overflow:hidden;background:#050505;border-bottom:1px solid var(--line)}
+.mod-preview img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.mod-card:hover .mod-preview img{transform:scale(1.05)}
+.mod-body{padding:22px 24px 24px;display:flex;flex-direction:column;flex:1}
+.mod-body>span{color:var(--gold);font-size:.72rem;letter-spacing:.14em;font-weight:900;text-shadow:0 0 12px rgba(0,255,0,.7)}
+.mod-body h3{font-size:1.7rem;text-transform:none;letter-spacing:-.03em;margin:12px 0 8px}
+.mod-body h3::after{display:none}
+.mod-body p{color:#969696;margin:0 0 22px;font-size:.95rem;line-height:1.55}
+.mod-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.mod-foot small{color:#7d8074;letter-spacing:.1em;text-transform:uppercase;font-size:.7rem;font-weight:800}
+.mod-foot .button{margin-top:0}
