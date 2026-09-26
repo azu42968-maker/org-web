@@ -5,7 +5,8 @@
   var loadFailed = false;
   var SIGNED_IDS = [ 11075924, 60698133, 52610289, 68370688, 9921820 ];
   var ALT_ACCOUNTS = {
-    42483385: [ 53543934 ]
+    42483385: [ 53543934 ],
+    128059064: [ 13017446 ]
   };
   var ICON_BASE = "files/assets/legends/";
   var LEGENDS = {
