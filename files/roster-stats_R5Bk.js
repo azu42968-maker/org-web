@@ -2,8 +2,15 @@
   var DATA_URL = "files/a_data/players.json";
   var API_BASE = "https://api.brawlhalla.com/v1";
   var ROSTER = [];
+  var BLOCKED_NAMES = [ "truckstopburrito" ];
+  function isBlockedName(n) {
+    n = String(n || "").toLowerCase().replace(/\s+/g, "");
+    return BLOCKED_NAMES.some(function(b) {
+      return n.indexOf(b) !== -1;
+    });
+  }
   var loadFailed = false;
-  var SIGNED_IDS = [ 11075924, 60698133, 52610289, 68370688, 9921820 ];
+  var SIGNED_IDS = [ 60698133, 52610289, 68370688, 9921820 ];
   var ALT_ACCOUNTS = {
     42483385: [ 53543934 ],
     128059064: [ 13017446 ]
@@ -421,7 +428,9 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
       return res.json();
     }).then(function(data) {
-      ROSTER = (data.players || []).map(toRosterEntry);
+      ROSTER = (data.players || []).map(toRosterEntry).filter(function(p) {
+        return !isBlockedName(p.name);
+      });
     }).catch(function(err) {
       console.error("No se pudo cargar " + DATA_URL, err);
       loadFailed = true;
@@ -548,6 +557,7 @@
       grid.innerHTML = "";
       SIGNED_IDS.forEach(function(id) {
         var p = byId[id];
+        if (p && isBlockedName(p.name)) return;
         var card = document.createElement("div");
         card.className = "signed-card";
         if (p) {
@@ -565,6 +575,13 @@
             });
           }
           pendingSignedLookups[id].then(function(entry) {
+            if (isBlockedName(entry.name)) {
+              ROSTER = ROSTER.filter(function(r) {
+                return r !== entry;
+              });
+              card.remove();
+              return;
+            }
             var wr2 = winrate(entry);
             card.innerHTML = '<span class="signed-card-badge">Signed</span>' + '<span class="signed-card-name">' + entry.name + "</span>" + '<span class="signed-card-sub">' + (entry.rating !== null ? (entry.region || "Unknown region") + " · " + entry.rating + " ELO · " + Math.round(wr2 * 100) + "% WR" : "No ranked data yet") + "</span>";
             card.addEventListener("click", function() {
@@ -584,7 +601,7 @@
       var q = (searchEl.value || "").trim().toLowerCase();
       var sortBy = sortEl.value;
       var rows = ROSTER.filter(function(p) {
-        return p.name.toLowerCase().indexOf(q) !== -1;
+        return !isBlockedName(p.name) && p.name.toLowerCase().indexOf(q) !== -1;
       });
       rows.sort(function(a, b) {
         var aSigned = !!signedSet[a.brawlhalla_id], bSigned = !!signedSet[b.brawlhalla_id];
@@ -680,6 +697,11 @@
       function refreshOne(p) {
         var idx = ROSTER.indexOf(p);
         return fetchLiveForRoster(p.brawlhalla_id).then(function(fresh) {
+          if (isBlockedName(fresh.name)) {
+            ROSTER.splice(ROSTER.indexOf(p), 1);
+            scheduleRender();
+            return;
+          }
           ROSTER[idx] = mergeEntry(ROSTER[idx], fresh);
           scheduleRender();
         }).catch(function() {});
