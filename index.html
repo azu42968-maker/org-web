@@ -661,7 +661,6 @@
     updateMuteIcon();
 
     function tryPlay(){ audio.play().catch(function(){}); }
-    /* el intento de autoplay se hace cuando la página ya terminó de cargar, no durante la carga */
     window.addEventListener('load', function(){ setTimeout(tryPlay, 1500); });
     ['click','keydown','touchstart'].forEach(function(evt){
       document.addEventListener(evt, tryPlay, { once: true });
@@ -731,7 +730,6 @@
   <script src="files/roster-stats_R5Bk.js?v=3"></script>
 
   <script>
-  /* Oculta a TruckStopBurrito del roster, de Signed Players y del panel de detalle */
   (function(){
     var BLOCKED = ['truckstopburrito'];
     function isBlocked(text){
@@ -739,14 +737,12 @@
       return BLOCKED.some(function(n){ return text.indexOf(n) !== -1; });
     }
     function sweep(){
-      /* tarjetas del roster y de signed players */
       var containers = document.querySelectorAll('#stats-body, #signed-grid');
       containers.forEach(function(box){
         Array.prototype.slice.call(box.children).forEach(function(card){
           if (isBlocked(card.textContent)) card.remove();
         });
       });
-      /* panel de detalle abierto */
       var detail = document.getElementById('stats-detail');
       var overlay = document.getElementById('stats-overlay');
       if (detail && overlay && isBlocked(detail.textContent)) {
@@ -755,7 +751,6 @@
         overlay.removeAttribute('style');
         document.body.classList.remove('stats-open', 'no-scroll', 'modal-open');
       }
-      /* si Signed Players queda vacío, esconder la sección */
       var signedGrid = document.getElementById('signed-grid');
       var signedSection = document.getElementById('signed-section');
       if (signedGrid && signedSection && !signedGrid.children.length) signedSection.hidden = true;

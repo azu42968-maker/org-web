@@ -733,7 +733,6 @@ footer::before{
     #0d0d0d;
 }
 
-/* ---------- MODS TAB (misma base visual que Services) ---------- */
 .mods-tab .mods-grid{max-width:1500px;margin-inline:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
 .mod-card{border:1px solid var(--line);background:#0e0e0e;display:flex;flex-direction:column;position:relative;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}
 .mod-card:hover{border-color:var(--acid);transform:translateY(-6px);box-shadow:0 0 0 1px var(--acid),0 20px 60px -20px rgba(0,255,0,.55)}
