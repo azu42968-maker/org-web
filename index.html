@@ -653,17 +653,24 @@
     var muteBtn = document.getElementById('music-mute');
     var volume = document.getElementById('music-volume');
 
-    var savedVol = localStorage.getItem('acid-music-volume');
+    var savedVol = parseFloat(localStorage.getItem('acid-music-volume'));
     var savedMuted = localStorage.getItem('acid-music-muted');
-    audio.volume = savedVol !== null ? parseFloat(savedVol) : 0.4;
+    if (isNaN(savedVol) || savedVol < 0 || savedVol > 1) savedVol = 0.4;
+    var lastVol = savedVol > 0 ? savedVol : 0.4;
+    audio.volume = savedVol;
     audio.muted = savedMuted === '1';
-    volume.value = Math.round(audio.volume * 100);
 
-    function updateMuteIcon(){
-      muteBtn.textContent = (audio.muted || audio.volume === 0) ? '🔇' : '🔊';
-      muteBtn.setAttribute('aria-pressed', audio.muted ? 'true' : 'false');
+    function isSilent(){ return audio.muted || audio.volume === 0; }
+
+    // Mantiene botón, icono y slider siempre coherentes entre sí
+    function syncUI(){
+      var shown = isSilent() ? 0 : Math.round(audio.volume * 100);
+      volume.value = shown;
+      volume.style.setProperty('--vol', shown + '%');
+      muteBtn.textContent = isSilent() ? '🔇' : '🔊';
+      muteBtn.setAttribute('aria-pressed', isSilent() ? 'true' : 'false');
     }
-    updateMuteIcon();
+    syncUI();
 
     function tryPlay(){ audio.play().catch(function(){}); }
     window.addEventListener('load', function(){ setTimeout(tryPlay, 1500); });
@@ -682,16 +689,24 @@
       panel.setAttribute('aria-hidden', 'true');
     });
     muteBtn.addEventListener('click', function(){
-      audio.muted = !audio.muted;
-      localStorage.setItem('acid-music-muted', audio.muted ? '1' : '0');
-      updateMuteIcon();
-    });
-    volume.addEventListener('input', function(){
-      audio.volume = volume.value / 100;
-      audio.muted = audio.volume === 0;
+      if (isSilent()) {
+        audio.muted = false;
+        if (audio.volume === 0) audio.volume = lastVol;   // desmutear devuelve el volumen anterior
+      } else {
+        audio.muted = true;
+      }
       localStorage.setItem('acid-music-volume', audio.volume);
       localStorage.setItem('acid-music-muted', audio.muted ? '1' : '0');
-      updateMuteIcon();
+      syncUI();
+    });
+    volume.addEventListener('input', function(){
+      var v = volume.value / 100;
+      audio.volume = v;
+      audio.muted = v === 0;
+      if (v > 0) lastVol = v;
+      localStorage.setItem('acid-music-volume', audio.volume);
+      localStorage.setItem('acid-music-muted', audio.muted ? '1' : '0');
+      syncUI();
     });
   })();
   </script>
@@ -769,4 +784,39 @@
   })();
   </script>
 
+  <script>
+  /* Activa el pulso/glitch del título y el glitch de la página (una sola vez)
+     cuando TODO terminó: página, fuentes, imagen del hero y todas las animaciones de entrada */
+  (function(){
+    var h=document.querySelector('.hero h1'); if(!h) return;
+    var loaded=new Promise(function(r){
+      if(document.readyState==='complete') r(); else window.addEventListener('load',r,{once:true});
+    });
+    var fonts=(document.fonts&&document.fonts.ready)||Promise.resolve();
+    var art=new Promise(function(r){
+      var el=document.querySelector('.hero-art'); if(!el) return r();
+      var m=/url\(["']?([^"')]+)["']?\)/.exec(getComputedStyle(el).backgroundImage||''); if(!m) return r();
+      var im=new Image(); im.onload=im.onerror=function(){ (im.decode?im.decode().catch(function(){}):Promise.resolve()).then(r); }; im.src=m[1];
+    });
+    /* Espera a que terminen todas las animaciones finitas (haz, entrada del título, lede, ticker, botones...) */
+    function introDone(){
+      var finite=document.getAnimations().filter(function(a){
+        var t=a.effect&&a.effect.getComputedTiming?a.effect.getComputedTiming():null;
+        return t&&isFinite(t.iterations)&&a.playState!=='finished'&&a.playState!=='idle';
+      });
+      if(!finite.length) return Promise.resolve();
+      return Promise.all(finite.map(function(a){ return a.finished.catch(function(){}); })).then(introDone);
+    }
+    Promise.all([loaded,fonts,art]).then(function(){
+      return new Promise(function(r){ setTimeout(r,50); }); /* deja que arranquen las animaciones con delay */
+    }).then(introDone).then(function(){
+      setTimeout(function(){
+        h.classList.add('is-alive');
+        var root=document.documentElement;
+        root.classList.add('page-glitch');
+        setTimeout(function(){ root.classList.remove('page-glitch'); },1100);
+      },250);
+    });
+  })();
+  </script>
 </body></html>

@@ -72,6 +72,22 @@ window.addEventListener("scroll", () => header.classList.toggle("scrolled", wind
   passive: true
 });
 
+// Scroll-progress bar fallback for browsers without animation-timeline (Firefox)
+const setScrollProgress = () => {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  document.documentElement.style.setProperty("--scroll", max > 0 ? Math.min(Math.max(window.scrollY / max, 0), 1) : 0);
+};
+
+window.addEventListener("scroll", setScrollProgress, {
+  passive: true
+});
+
+window.addEventListener("resize", setScrollProgress);
+
+if (window.ResizeObserver) new ResizeObserver(setScrollProgress).observe(document.body);
+
+setScrollProgress();
+
 menuButton.addEventListener("click", () => {
   const open = !nav.classList.contains("open");
   nav.classList.toggle("open", open);
