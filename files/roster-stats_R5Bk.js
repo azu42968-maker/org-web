@@ -345,8 +345,36 @@
       xp: p.xp === undefined ? null : p.xp,
       games_ranked: p.games_ranked === undefined ? null : p.games_ranked,
       wins_ranked: p.wins_ranked === undefined ? null : p.wins_ranked,
+      rating_2v2: p.rating_2v2 === undefined ? null : p.rating_2v2,
+      peak_rating_2v2: p.peak_rating_2v2 === undefined ? null : p.peak_rating_2v2,
+      tier_2v2: p.tier_2v2 || null,
+      global_rank_2v2: p.global_rank_2v2 === undefined ? null : p.global_rank_2v2,
+      games_2v2: p.games_2v2 === undefined ? null : p.games_2v2,
+      wins_2v2: p.wins_2v2 === undefined ? null : p.wins_2v2,
       legends: legends
     };
+  }
+  function parse2v2(j) {
+    if (!j) return {};
+    var t = j;
+    var teams = Array.isArray(j) ? j : j.teams || j.data || j.results || j["2v2"] || j.ranked_2v2;
+    if (Array.isArray(teams) && !teams.length) return {};
+    if (Array.isArray(teams)) {
+      t = teams.slice().sort(function(a, b) {
+        return (b.rating || 0) - (a.rating || 0);
+      })[0];
+    }
+    return {
+      rating_2v2: t.rating ?? null,
+      peak_rating_2v2: t.peak_rating ?? null,
+      tier_2v2: t.tier ?? null,
+      global_rank_2v2: t.global_rank ?? null,
+      games_2v2: t.games ?? null,
+      wins_2v2: t.wins ?? null
+    };
+  }
+  function sub2(p) {
+    return p.rating_2v2 !== null ? " · 2v2 " + p.rating_2v2 + " ELO" : "";
   }
   function fmtNum(n) {
     return n === undefined || n === null ? "—" : Number(n).toLocaleString("en");
@@ -402,12 +430,21 @@
       if (!res.ok) throw new Error("HTTP " + res.status);
       return res.json();
     }).then(function(allStats) {
-      return fetch(rankedUrl).then(function(res) {
+      var doublesUrl = API_BASE + "/player/teams?brawlhalla_id=" + id;
+      var doublesP = fetch(doublesUrl).then(function(res) {
+        return res.ok ? res.json() : null;
+      }).catch(function() {
+        return null;
+      }).then(parse2v2);
+      return Promise.all([ fetch(rankedUrl).then(function(res) {
         return res.ok ? res.json() : {};
       }).catch(function() {
         return {};
-      }).then(function(ranked) {
+      }), doublesP ]).then(function(pair) {
+        var ranked = pair[0], d2 = pair[1];
         return toRosterEntry({
+          rating_2v2: d2.rating_2v2, peak_rating_2v2: d2.peak_rating_2v2, tier_2v2: d2.tier_2v2,
+          global_rank_2v2: d2.global_rank_2v2, games_2v2: d2.games_2v2, wins_2v2: d2.wins_2v2,
           brawlhalla_id: id,
           name: allStats.name || "#" + id,
           level: allStats.level ?? null,
@@ -501,6 +538,7 @@
         xp: 0,
         games_ranked: 0,
         wins_ranked: 0,
+        rating_2v2: null, peak_rating_2v2: null, tier_2v2: null, global_rank_2v2: null, games_2v2: null, wins_2v2: null,
         legends: combineLegends(found.map(function(f) {
           return f.legends;
         }))
@@ -518,6 +556,14 @@
           combined.region = f.region;
           combined.global_rank = f.global_rank;
         }
+        if (f.rating_2v2 !== null && (combined.rating_2v2 === null || f.rating_2v2 > combined.rating_2v2)) {
+          combined.rating_2v2 = f.rating_2v2;
+          combined.peak_rating_2v2 = f.peak_rating_2v2;
+          combined.tier_2v2 = f.tier_2v2;
+          combined.global_rank_2v2 = f.global_rank_2v2;
+          combined.games_2v2 = f.games_2v2;
+          combined.wins_2v2 = f.wins_2v2;
+        }
         if (f.level !== null && (combined.level === null || f.level > combined.level)) combined.level = f.level;
       });
       return combined;
@@ -532,6 +578,12 @@
     var sortEl = document.getElementById("stats-sort");
     var overlay = document.getElementById("stats-overlay");
     var detail = document.getElementById("stats-detail");
+    if (sortEl && !sortEl.querySelector('[value="elo2-desc"]')) {
+      var opt = document.createElement("option");
+      opt.value = "elo2-desc";
+      opt.textContent = "2v2 ELO: high to low";
+      sortEl.appendChild(opt);
+    }
     var signedSet = {};
     SIGNED_IDS.forEach(function(id) {
       signedSet[id] = true;
@@ -562,7 +614,7 @@
         card.className = "signed-card";
         if (p) {
           var wr = winrate(p);
-          card.innerHTML = '<span class="signed-card-badge">Signed</span>' + '<span class="signed-card-name">' + p.name + "</span>" + '<span class="signed-card-sub">' + (p.rating !== null ? (p.region || "Unknown region") + " · " + p.rating + " ELO · " + Math.round(wr * 100) + "% WR" : "No data yet") + "</span>";
+          card.innerHTML = '<span class="signed-card-badge">Signed</span>' + '<span class="signed-card-name">' + p.name + "</span>" + '<span class="signed-card-sub">' + (p.rating !== null ? (p.region || "Unknown region") + " · " + p.rating + " ELO · " + Math.round(wr * 100) + "% WR" + sub2(p) : p.rating_2v2 !== null ? "2v2 " + p.rating_2v2 + " ELO" : "No data yet") + "</span>";
           card.addEventListener("click", function() {
             openDetail(p);
           });
@@ -583,7 +635,7 @@
               return;
             }
             var wr2 = winrate(entry);
-            card.innerHTML = '<span class="signed-card-badge">Signed</span>' + '<span class="signed-card-name">' + entry.name + "</span>" + '<span class="signed-card-sub">' + (entry.rating !== null ? (entry.region || "Unknown region") + " · " + entry.rating + " ELO · " + Math.round(wr2 * 100) + "% WR" : "No ranked data yet") + "</span>";
+            card.innerHTML = '<span class="signed-card-badge">Signed</span>' + '<span class="signed-card-name">' + entry.name + "</span>" + '<span class="signed-card-sub">' + (entry.rating !== null ? (entry.region || "Unknown region") + " · " + entry.rating + " ELO · " + Math.round(wr2 * 100) + "% WR" + sub2(entry) : entry.rating_2v2 !== null ? "2v2 " + entry.rating_2v2 + " ELO" : "No ranked data yet") + "</span>";
             card.addEventListener("click", function() {
               openDetail(entry);
             });
@@ -607,6 +659,11 @@
         var aSigned = !!signedSet[a.brawlhalla_id], bSigned = !!signedSet[b.brawlhalla_id];
         if (aSigned !== bSigned) return aSigned ? -1 : 1;
         if (sortBy === "name-asc") return a.name.localeCompare(b.name);
+        if (sortBy === "elo2-desc") {
+          var a2 = a.rating_2v2 !== null, b2 = b.rating_2v2 !== null;
+          if (a2 !== b2) return a2 ? -1 : 1;
+          return (b.rating_2v2 || 0) - (a.rating_2v2 || 0);
+        }
         var aHas = a.rating !== null, bHas = b.rating !== null;
         if (aHas !== bHas) return aHas ? -1 : 1;
         if (sortBy === "elo-desc") return (b.rating || 0) - (a.rating || 0);
@@ -624,7 +681,7 @@
         card.className = "stats-card";
         var topLegend = p.legends[0];
         var icon = topLegend ? legendIcon(topLegend.id) : "";
-        card.innerHTML = '<span class="stats-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>' + (icon ? '<img class="stats-card-legend-icon" src="' + icon + '" alt="' + topLegend.name + '" loading="lazy" onerror="this.style.display=\'none\'">' : "") + '<span class="stats-card-name">' + p.name + "</span>" + '<span class="stats-card-sub">' + (p.rating !== null ? p.region + " · " + p.rating + " ELO · " + Math.round(wr * 100) + "% WR" : "No data yet") + "</span>";
+        card.innerHTML = '<span class="stats-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>' + (icon ? '<img class="stats-card-legend-icon" src="' + icon + '" alt="' + topLegend.name + '" loading="lazy" onerror="this.style.display=\'none\'">' : "") + '<span class="stats-card-name">' + p.name + "</span>" + '<span class="stats-card-sub">' + (p.rating !== null ? p.region + " · " + p.rating + " ELO · " + Math.round(wr * 100) + "% WR" + sub2(p) : p.rating_2v2 !== null ? "2v2 " + p.rating_2v2 + " ELO" : "No data yet") + "</span>";
         card.addEventListener("click", function() {
           openDetail(p);
         });
@@ -637,7 +694,7 @@
       var wr = winrate(p);
       var has = p.rating !== null;
       var dash = '<span class="stats-value" style="color:#666">—</span>';
-      detail.innerHTML = '<div class="stats-detail-head">' + '<div class="stats-detail-id">' + '<div class="stats-avatar-lg">' + initials(p.name) + "</div>" + "<div><h3>" + p.name + "</h3>" + '<div class="stats-detail-meta">' + (p.region || "Unknown region") + (p.level !== null ? " · Level " + p.level : "") + "</div></div>" + "</div>" + '<button class="stats-close" type="button" aria-label="Close">✕</button>' + "</div>" + '<div class="stats-detail-body">' + '<div class="stats-detail-grid">' + '<div class="stats-detail-box"><span class="stats-label">Current ELO</span>' + (has ? '<span class="stats-value accent">' + p.rating + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">Peak ELO</span>' + (has ? '<span class="stats-value">' + p.peak_rating + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">Tier</span>' + (has ? '<span class="stats-value hazard" style="font-size:.95rem">' + (p.tier || "Valhallan") + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">Global rank</span>' + (has && p.global_rank !== null ? '<span class="stats-value">#' + p.global_rank.toLocaleString("en") + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">Games</span><span class="stats-value">' + p.games + "</span></div>" + '<div class="stats-detail-box"><span class="stats-label">Win rate</span><span class="stats-value accent">' + Math.round(wr * 100) + "%</span></div>" + (p.xp !== null && p.xp !== undefined ? '<div class="stats-detail-box"><span class="stats-label">Total XP</span><span class="stats-value">' + fmtNum(p.xp) + "</span></div>" : "") + (p.games_ranked ? '<div class="stats-detail-box"><span class="stats-label">Ranked games</span><span class="stats-value">' + fmtNum(p.games_ranked) + "</span></div>" : "") + (p.games_ranked ? '<div class="stats-detail-box"><span class="stats-label">Ranked win rate</span><span class="stats-value accent">' + Math.round(p.wins_ranked / p.games_ranked * 100) + "%</span></div>" : "") + "</div>" + totalsHtml(p.legends) + '<p class="stats-section-label">Most played legends</p>' + (p.legends.length ? p.legends.map(legendRowHtml).join("") : "<p style=\"color:#666;font-size:.85rem;padding:6px 0\">This player's stats haven't been pulled in yet.</p>") + "</div>";
+      detail.innerHTML = '<div class="stats-detail-head">' + '<div class="stats-detail-id">' + '<div class="stats-avatar-lg">' + initials(p.name) + "</div>" + "<div><h3>" + p.name + "</h3>" + '<div class="stats-detail-meta">' + (p.region || "Unknown region") + (p.level !== null ? " · Level " + p.level : "") + "</div></div>" + "</div>" + '<button class="stats-close" type="button" aria-label="Close">✕</button>' + "</div>" + '<div class="stats-detail-body">' + '<div class="stats-detail-grid">' + '<div class="stats-detail-box"><span class="stats-label">Current ELO</span>' + (has ? '<span class="stats-value accent">' + p.rating + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">Peak ELO</span>' + (has ? '<span class="stats-value">' + p.peak_rating + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">Tier</span>' + (has ? '<span class="stats-value hazard" style="font-size:.95rem">' + (p.tier || "Valhallan") + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">Global rank</span>' + (has && p.global_rank !== null ? '<span class="stats-value">#' + p.global_rank.toLocaleString("en") + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">2v2 ELO</span>' + (p.rating_2v2 !== null ? '<span class="stats-value accent">' + p.rating_2v2 + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">2v2 Peak</span>' + (p.peak_rating_2v2 !== null ? '<span class="stats-value">' + p.peak_rating_2v2 + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">2v2 Tier</span>' + (p.tier_2v2 ? '<span class="stats-value hazard" style="font-size:.95rem">' + p.tier_2v2 + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">2v2 Rank</span>' + (p.global_rank_2v2 !== null ? '<span class="stats-value">#' + p.global_rank_2v2.toLocaleString("en") + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">2v2 Games</span>' + (p.games_2v2 ? '<span class="stats-value">' + fmtNum(p.games_2v2) + "</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">2v2 Win rate</span>' + (p.games_2v2 ? '<span class="stats-value accent">' + Math.round(p.wins_2v2 / p.games_2v2 * 100) + "%</span>" : dash) + "</div>" + '<div class="stats-detail-box"><span class="stats-label">Games</span><span class="stats-value">' + p.games + "</span></div>" + '<div class="stats-detail-box"><span class="stats-label">Win rate</span><span class="stats-value accent">' + Math.round(wr * 100) + "%</span></div>" + (p.xp !== null && p.xp !== undefined ? '<div class="stats-detail-box"><span class="stats-label">Total XP</span><span class="stats-value">' + fmtNum(p.xp) + "</span></div>" : "") + (p.games_ranked ? '<div class="stats-detail-box"><span class="stats-label">Ranked games</span><span class="stats-value">' + fmtNum(p.games_ranked) + "</span></div>" : "") + (p.games_ranked ? '<div class="stats-detail-box"><span class="stats-label">Ranked win rate</span><span class="stats-value accent">' + Math.round(p.wins_ranked / p.games_ranked * 100) + "%</span></div>" : "") + "</div>" + totalsHtml(p.legends) + '<p class="stats-section-label">Most played legends</p>' + (p.legends.length ? p.legends.map(legendRowHtml).join("") : "<p style=\"color:#666;font-size:.85rem;padding:6px 0\">This player's stats haven't been pulled in yet.</p>") + "</div>";
       overlay.classList.add("open");
       detail.querySelector(".stats-close").addEventListener("click", closeDetail);
     }
@@ -684,6 +741,12 @@
         xp: fresh.xp !== null ? fresh.xp : oldEntry.xp,
         games_ranked: fresh.games_ranked !== null ? fresh.games_ranked : oldEntry.games_ranked,
         wins_ranked: fresh.wins_ranked !== null ? fresh.wins_ranked : oldEntry.wins_ranked,
+        rating_2v2: fresh.rating_2v2 !== null ? fresh.rating_2v2 : oldEntry.rating_2v2,
+        peak_rating_2v2: fresh.peak_rating_2v2 !== null ? fresh.peak_rating_2v2 : oldEntry.peak_rating_2v2,
+        tier_2v2: fresh.tier_2v2 !== null ? fresh.tier_2v2 : oldEntry.tier_2v2,
+        global_rank_2v2: fresh.global_rank_2v2 !== null ? fresh.global_rank_2v2 : oldEntry.global_rank_2v2,
+        games_2v2: fresh.games_2v2 !== null ? fresh.games_2v2 : oldEntry.games_2v2,
+        wins_2v2: fresh.wins_2v2 !== null ? fresh.wins_2v2 : oldEntry.wins_2v2,
         legends: mergeLegends(oldEntry.legends, fresh.legends)
       };
     }
