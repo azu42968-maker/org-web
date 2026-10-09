@@ -10,12 +10,20 @@
     });
   }
   var loadFailed = false;
-  var SIGNED_IDS = [ 60698133, 52610289, 68370688, 9921820, 119039128 ];
+  var SIGNED_IDS = [ 60698133, 52610289, 113624741, 9921820, 119039128 ];
   var ALT_ACCOUNTS = {
-    68370688: [ 113624741 ],
     42483385: [ 53543934 ],
     128059064: [ 13017446 ]
   };
+  var STATS_ONLY_ALTS = {
+    113624741: [ 68370688 ]
+  };
+  var STATS_ONLY_ALT_IDS = {};
+  Object.keys(STATS_ONLY_ALTS).forEach(function(k) {
+    STATS_ONLY_ALTS[k].forEach(function(a) {
+      STATS_ONLY_ALT_IDS[a] = true;
+    });
+  });
   var ICON_BASE = "files/assets/legends/";
   var LEGENDS = {
     3: {
@@ -467,7 +475,7 @@
       return res.json();
     }).then(function(data) {
       ROSTER = (data.players || []).map(toRosterEntry).filter(function(p) {
-        return !isBlockedName(p.name);
+        return !isBlockedName(p.name) && !STATS_ONLY_ALT_IDS[p.brawlhalla_id];
       });
     }).catch(function(err) {
       console.error("No se pudo cargar " + DATA_URL, err);
@@ -514,6 +522,22 @@
     });
   }
   function fetchLiveForRoster(id) {
+    var statAlts = STATS_ONLY_ALTS[id];
+    if (statAlts && statAlts.length) {
+      return fetchLivePlayerWithRetry(id).then(function(main) {
+        return Promise.all(statAlts.map(function(altId) {
+          return fetchLivePlayerWithRetry(altId).catch(function() {
+            return null;
+          });
+        })).then(function(extras) {
+          extras.filter(Boolean).forEach(function(x) {
+            main.games = (main.games || 0) + (x.games || 0);
+            main.wins = (main.wins || 0) + (x.wins || 0);
+          });
+          return main;
+        });
+      });
+    }
     var altIds = ALT_ACCOUNTS[id] || [];
     if (!altIds.length) return fetchLivePlayerWithRetry(id);
     var allIds = [ id ].concat(altIds);
