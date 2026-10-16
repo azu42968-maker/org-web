@@ -365,21 +365,38 @@
   }
   function parse2v2(j) {
     if (!j) return {};
-    var t = j;
-    var teams = Array.isArray(j) ? j : j.teams || j.data || j.results || j["2v2"] || j.ranked_2v2;
-    if (Array.isArray(teams) && !teams.length) return {};
-    if (Array.isArray(teams)) {
-      t = teams.slice().sort(function(a, b) {
-        return (b.rating || 0) - (a.rating || 0);
-      })[0];
+    var found = [];
+    function walk(node, depth) {
+      if (!node || typeof node !== "object" || depth > 5) return;
+      if (Array.isArray(node)) {
+        node.forEach(function(n) { walk(n, depth + 1); });
+        return;
+      }
+      var r = node.rating !== undefined ? node.rating : node.elo;
+      if (typeof r === "number") {
+        found.push(node);
+        return;
+      }
+      Object.keys(node).forEach(function(k) { walk(node[k], depth + 1); });
+    }
+    walk(j.teams !== undefined ? j.teams : j, 0);
+    if (!found.length) return {};
+    found.sort(function(a, b) {
+      var ra = a.rating !== undefined ? a.rating : a.elo, rb = b.rating !== undefined ? b.rating : b.elo;
+      return (rb || 0) - (ra || 0);
+    });
+    var t = found[0];
+    function pick() {
+      for (var i = 0; i < arguments.length; i++) if (t[arguments[i]] !== undefined && t[arguments[i]] !== null) return t[arguments[i]];
+      return null;
     }
     return {
-      rating_2v2: t.rating ?? null,
-      peak_rating_2v2: t.peak_rating ?? null,
-      tier_2v2: t.tier ?? null,
-      global_rank_2v2: t.global_rank ?? null,
-      games_2v2: t.games ?? null,
-      wins_2v2: t.wins ?? null
+      rating_2v2: pick("rating", "elo"),
+      peak_rating_2v2: pick("peak_rating", "peak", "peak_elo"),
+      tier_2v2: pick("tier"),
+      global_rank_2v2: pick("global_rank", "rank"),
+      games_2v2: pick("games"),
+      wins_2v2: pick("wins")
     };
   }
   function sub2(p) {
@@ -436,18 +453,29 @@
     var allUrl = API_BASE + "/player/stats?brawlhalla_id=" + id + "&mode=all";
     var rankedUrl = API_BASE + "/player/stats?brawlhalla_id=" + id + "&mode=ranked_1v1";
     return fetch(allUrl).then(function(res) {
+      if (!res.ok) console.warn("[stats] HTTP " + res.status + " en " + allUrl);
       if (!res.ok) throw new Error("HTTP " + res.status);
       return res.json();
     }).then(function(allStats) {
       var doublesUrl = API_BASE + "/player/teams?brawlhalla_id=" + id;
       var doublesP = fetch(doublesUrl).then(function(res) {
-        return res.ok ? res.json() : null;
-      }).catch(function() {
+        if (!res.ok) {
+          console.warn("[2v2] HTTP " + res.status + " en " + doublesUrl);
+          return null;
+        }
+        return res.json();
+      }).catch(function(err) {
+        console.warn("[2v2] fallo de red/CORS en " + doublesUrl, err);
         return null;
-      }).then(parse2v2);
+      }).then(function(j) {
+        console.log("[2v2] respuesta cruda de " + id, JSON.stringify(j));
+        return parse2v2(j);
+      });
       return Promise.all([ fetch(rankedUrl).then(function(res) {
+        if (!res.ok) console.warn("[1v1] HTTP " + res.status + " en " + rankedUrl);
         return res.ok ? res.json() : {};
-      }).catch(function() {
+      }).catch(function(err) {
+        console.warn("[1v1] fallo de red/CORS en " + rankedUrl, err);
         return {};
       }), doublesP ]).then(function(pair) {
         var ranked = pair[0], d2 = pair[1];
@@ -792,7 +820,9 @@
           }
           ROSTER[idx] = mergeEntry(ROSTER[idx], fresh);
           scheduleRender();
-        }).catch(function() {});
+        }).catch(function(err) {
+          console.warn("[refresh] fallo con " + p.brawlhalla_id, err);
+        });
       }
       function runPool(items, worker, limit) {
         var i = 0;
