@@ -158,6 +158,17 @@ subir_repo() {
   if [ "$nombre" = "azu-mod-maker" ]; then
     # Los ejecutables y temporales de PyInstaller no se suben al repo
     asegurar_ignore 'Ejecutables/' 'build/' 'dist/' 'release/' '__pycache__/' '*.pyc'
+
+    # GitHub solo lee workflows desde .github/workflows/: si build.yml esta suelto
+    # en la raiz del proyecto, lo muevo al sitio correcto.
+    if [ -f build.yml ]; then
+      mkdir -p .github/workflows
+      mv -f build.yml .github/workflows/build.yml
+      echo "build.yml movido a .github/workflows/"
+    fi
+    if [ ! -f .github/workflows/build.yml ]; then
+      echo "[!] Falta .github/workflows/build.yml: sin el no hay build de ejecutables."
+    fi
   fi
 
   # Commit
