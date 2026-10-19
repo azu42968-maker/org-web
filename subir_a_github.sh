@@ -16,7 +16,8 @@ ORG_DIR="$HOME/azu42968-maker/org-web"
 MOD_DIR="$HOME/azu42968-maker/azu-mod-maker"
 MODS_DEST="$ORG_DIR/files/mods"            # donde apuntan los botones del index.html
 MOD_SLUG="$GH_USER/azu-mod-maker"
-LIMITE_MB=95                               # GitHub rechaza archivos de mas de 100 MB
+LIMITE_MB=95                               # GitHub rechaza archivos de mas de 100 MB en el repo
+RELEASE_TAG="latest"                       # los archivos grandes van a este Release de azu-mod-maker
 
 # nombre|carpeta|url   (azu-mod-maker primero: sus ejecutables alimentan a org-web)
 REPOS=(
@@ -247,6 +248,17 @@ descomprimir() {
   fi
 }
 
+# Sube un archivo grande al Release fijo de azu-mod-maker (reemplaza el anterior)
+subir_a_release() {
+  local ruta="$1"
+  if ! gh release view "$RELEASE_TAG" -R "$MOD_SLUG" >/dev/null 2>&1; then
+    gh release create "$RELEASE_TAG" -R "$MOD_SLUG" --target main \
+      --title "Ejecutables" \
+      --notes "Ejecutables grandes, actualizados automaticamente por subir_a_github.sh" >/dev/null || return 1
+  fi
+  gh release upload "$RELEASE_TAG" "$ruta" -R "$MOD_SLUG" --clobber
+}
+
 # Baja los ejecutables de GitHub Actions y los deja en org-web/files/mods
 bajar_ejecutables() {
   echo
@@ -309,7 +321,7 @@ bajar_ejecutables() {
   descomprimir "$z" "$tmp/out" || { echo "[ERROR] No pude descomprimir $z"; rm -rf "$tmp"; return 1; }
 
   mkdir -p "$MODS_DEST"
-  local f ruta mb copiados=0 omitidos=0
+  local f ruta mb copiados=0 enrelease=0
   for f in AzuModificationLin AzuModificationWin.exe AzuModificationMac.zip; do
     ruta=$(find "$tmp/out" -name "$f" -type f | head -n 1)
     if [ -z "$ruta" ]; then
@@ -318,8 +330,14 @@ bajar_ejecutables() {
     fi
     mb=$(( $(stat -c%s "$ruta") / 1024 / 1024 ))
     if [ "$mb" -ge "$LIMITE_MB" ]; then
-      echo "  [OMITIDO] $f pesa ${mb} MB: GitHub no deja subir archivos de mas de 100 MB."
-      omitidos=$((omitidos+1))
+      echo "  [GRANDE]  $f pesa ${mb} MB: va al Release '$RELEASE_TAG' (el repo no admite mas de 100 MB)."
+      rm -f "$MODS_DEST/$f"      # que no quede una copia vieja/rota en la web
+      if subir_a_release "$ruta"; then
+        echo "  [OK]      $f subido al Release: https://github.com/$MOD_SLUG/releases/download/$RELEASE_TAG/$f"
+        enrelease=$((enrelease+1))
+      else
+        echo "  [ERROR]   No pude subir $f al Release."
+      fi
       continue
     fi
     cp -f "$ruta" "$MODS_DEST/$f" && echo "  [OK]      $f (${mb} MB)" && copiados=$((copiados+1))
@@ -329,12 +347,7 @@ bajar_ejecutables() {
   rm -f "$MODS_DEST/AzuModification.exe" "$MODS_DEST/AzuModification-linux-x64"
 
   rm -rf "$tmp"
-  if [ "$omitidos" -gt 0 ]; then
-    echo
-    echo "[!] $omitidos archivo(s) pasan el limite. Opcion: subirlos a un GitHub Release"
-    echo "    del repo azu-mod-maker y poner ese enlace en el index.html."
-  fi
-  [ "$copiados" -gt 0 ]
+  [ $((copiados + enrelease)) -gt 0 ]
 }
 
 # --- Argumentos ---
