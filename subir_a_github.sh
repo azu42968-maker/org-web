@@ -4,7 +4,7 @@
 #   2. acidmodloader  (Acid Mod Loader)   -> push
 #   3. GitHub Actions compila los ejecutables -> se bajan y se publican
 #        - AzuModification: Win/Mac a org-web/files/mods/, Linux (grande) a un Release
-#        - AcidModLoader:   zip de Windows a un Release de acidmodloader
+#        - AcidModLoader:   Win/Linux/Mac (3 archivos separados) a un Release de acidmodloader
 #   4. org-web        (la pagina de Acid) -> push
 #
 # Uso:  ./subir_a_github.sh                -> todo (con menu para los ejecutables)
@@ -346,7 +346,7 @@ descomprimir() {
 # id|repo|artifact|archivos|destino   (destino: auto = web si pesa poco, release = siempre al Release)
 APPS=(
   "azu-mod-maker|$GH_USER/azu-mod-maker|AzuModification-Todos|AzuModificationLin AzuModificationWin.exe AzuModificationMac.zip|auto"
-  "acidmodloader|$GH_USER/acidmodloader|AcidModLoader-Win|AcidModLoaderWin.zip|release"
+  "acidmodloader|$GH_USER/acidmodloader|AcidModLoader-Todos|AcidModLoaderWin.exe AcidModLoaderLin AcidModLoaderMac.zip|release"
 )
 
 declare -A RUN_ID PUSH_OK
