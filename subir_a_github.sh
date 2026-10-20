@@ -1,31 +1,57 @@
 #!/usr/bin/env bash
-# Sube a GitHub los dos proyectos y pasa los ejecutables compilados a la web:
-#   1. azu-mod-maker  (AzuModification + workflow de GitHub Actions)  -> push
-#   2. GitHub Actions compila Lin/Win/Mac -> se bajan a org-web/files/mods/
-#   3. org-web        (la pagina de Acid)                              -> push
+# Sube a GitHub los proyectos y pasa los ejecutables compilados a la web:
+#   1. azu-mod-maker  (AzuModification)   -> push
+#   2. acidmodloader  (Acid Mod Loader)   -> push
+#   3. GitHub Actions compila los ejecutables -> se bajan y se publican
+#        - AzuModification: Win/Mac a org-web/files/mods/, Linux (grande) a un Release
+#        - AcidModLoader:   zip de Windows a un Release de acidmodloader
+#   4. org-web        (la pagina de Acid) -> push
 #
-# Uso:  ./subir_a_github.sh            -> todo (con menu para los ejecutables)
-#       ./subir_a_github.sh org-web    -> solo org-web
-#       ./subir_a_github.sh azu-mod    -> solo azu-mod-maker (basta parte del nombre)
-#       ./subir_a_github.sh --exe      -> solo bajar ejecutables a files/mods y subir org-web
+# Uso:  ./subir_a_github.sh                -> todo (con menu para los ejecutables)
+#       ./subir_a_github.sh org-web        -> solo org-web
+#       ./subir_a_github.sh azu-mod        -> solo azu-mod-maker (basta parte del nombre)
+#       ./subir_a_github.sh acid           -> solo acidmodloader
+#       ./subir_a_github.sh --exe          -> solo bajar/publicar ejecutables y subir org-web
+#       ./subir_a_github.sh --exe acid     -> igual, pero solo los de acidmodloader
 
 export PATH="$HOME/.local/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
 
 GH_USER="azu42968-maker"
 ORG_DIR="$HOME/azu42968-maker/org-web"
 MOD_DIR="$HOME/azu42968-maker/azu-mod-maker"
+ACID_DIR="$HOME/azu42968-maker/acidmodloader"   # <- cambia esta ruta si tu carpeta esta en otro lado
 MODS_DEST="$ORG_DIR/files/mods"            # donde apuntan los botones del index.html
-MOD_SLUG="$GH_USER/azu-mod-maker"
 LIMITE_MB=95                               # GitHub rechaza archivos de mas de 100 MB en el repo
-RELEASE_TAG="latest"                       # los archivos grandes van a este Release de azu-mod-maker
+RELEASE_TAG="latest"                       # Release fijo donde van los archivos grandes
 
-# nombre|carpeta|url   (azu-mod-maker primero: sus ejecutables alimentan a org-web)
+# nombre|carpeta|url   (las apps primero: sus ejecutables alimentan a org-web)
 REPOS=(
   "azu-mod-maker|$MOD_DIR|https://github.com/$GH_USER/azu-mod-maker.git"
+  "acidmodloader|$ACID_DIR|https://github.com/$GH_USER/acidmodloader.git"
   "org-web|$ORG_DIR|https://github.com/$GH_USER/org-web.git"
 )
 
 salir() { read -rp "Pulsa Enter para salir..." _; exit "${1:-0}"; }
+
+# --- Argumentos ---
+FILTRO=""
+SOLO_EXE=0
+for a in "$@"; do
+  case "$a" in
+    --exe|exe|ejecutables) SOLO_EXE=1 ;;
+    *) FILTRO="$a" ;;
+  esac
+done
+ELEGIDOS=()    # lo que eliges en el menu (vacio = se usa el filtro / todo)
+quiere() {
+  if [ "${#ELEGIDOS[@]}" -gt 0 ]; then
+    local x; for x in "${ELEGIDOS[@]}"; do [ "$x" = "$1" ] && return 0; done; return 1
+  fi
+  [ -z "$FILTRO" ] || [[ "$1" == *"$FILTRO"* ]]
+}
+datos_repo() { local e; for e in "${REPOS[@]}"; do [[ "$e" == "$1|"* ]] && { echo "$e"; return; }; done; }
+COPIADO_A_WEB=0
+declare -A FALTAN   # archivos que el build necesita y no estan en GitHub, por repo
 
 echo "========================================"
 echo "  Subir proyectos a GitHub"
@@ -102,6 +128,28 @@ asegurar_login() {
 # --- Pedir login una sola vez para los dos repos ---
 asegurar_login
 
+# --- Elegir que subir (si no pasaste filtro ni --exe) ---
+if [ -z "$FILTRO" ] && [ "$SOLO_EXE" -eq 0 ]; then
+  echo
+  echo "Que quieres subir?"
+  echo "  [1] azu-mod-maker   (AzuModification + su ejecutable)"
+  echo "  [2] acidmodloader   (AcidModLoader + su ejecutable)"
+  echo "  [3] org-web         (la pagina)"
+  echo
+  read -rp "Numeros separados por espacio, p. ej. 1 3  (Enter = todo): " SEL_IN
+  for t in $SEL_IN; do
+    case "$t" in
+      1) ELEGIDOS+=("azu-mod-maker") ;;
+      2) ELEGIDOS+=("acidmodloader") ;;
+      3) ELEGIDOS+=("org-web") ;;
+    esac
+  done
+  if [ "${#ELEGIDOS[@]}" -eq 0 ]; then
+    ELEGIDOS=("azu-mod-maker" "acidmodloader" "org-web")
+  fi
+  echo "Elegido: ${ELEGIDOS[*]}"
+fi
+
 # --- Mensaje de commit (uno solo para todos) ---
 echo
 read -rp "Mensaje del commit, Enter para usar fecha y hora: " MSG
@@ -156,9 +204,15 @@ subir_repo() {
   if [ ! -f .gitignore ]; then
     printf '%s\n' '.DS_Store' 'Thumbs.db' '*.swp' '*~' '.directory' > .gitignore
   fi
-  if [ "$nombre" = "azu-mod-maker" ]; then
+  if [ "$nombre" = "azu-mod-maker" ] || [ "$nombre" = "acidmodloader" ]; then
     # Los ejecutables y temporales de PyInstaller no se suben al repo
     asegurar_ignore 'Ejecutables/' 'build/' 'dist/' 'release/' '__pycache__/' '*.pyc'
+    if [ "$nombre" = "acidmodloader" ]; then
+      # Entornos y descargas que genera build_exe.py (el JRE se baja solo en cada build)
+      asegurar_ignore '.build-venv/' '.build-python312/' 'vendor/jre/' 'payload/*.zip'
+      # Si ya se habian subido antes, dejar de seguirlos (los archivos locales no se borran)
+      git rm -r -q --cached --ignore-unmatch .build-venv .build-python312 build dist __pycache__ vendor/jre >/dev/null 2>&1
+    fi
 
     # GitHub solo lee workflows desde .github/workflows/: si build.yml esta suelto
     # en la raiz del proyecto, lo muevo al sitio correcto.
@@ -182,6 +236,27 @@ subir_repo() {
   else
     echo "No hay cambios nuevos que commitear."
   fi
+
+  # Comprobar que el build tendra todo lo que necesita en GitHub
+  local REQ=""
+  case "$nombre" in
+    acidmodloader) REQ="build_exe.py requirements.txt launcher.py build_payload.py payload/app_main.py payload/version.json vendor/ffdec_lib.jar" ;;
+    azu-mod-maker) REQ="build_exe.py AppLauncher.py" ;;
+  esac
+  FALTAN[$nombre]=""
+  local f ign
+  for f in $REQ; do
+    if ! git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+      if [ -e "$f" ]; then
+        ign=$(git check-ignore -v "$f" 2>/dev/null)
+        echo "  [!] $f existe aqui pero NO se esta subiendo${ign:+ (lo ignora: $ign)}"
+      else
+        echo "  [!] $f no existe en $dir"
+      fi
+      FALTAN[$nombre]+="$f "
+    fi
+  done
+  [ -n "${FALTAN[$nombre]}" ] && echo "  [!] Sin esos archivos el build de $nombre va a fallar en GitHub."
 
   # Push
   echo
@@ -248,143 +323,199 @@ descomprimir() {
   fi
 }
 
-# Sube un archivo grande al Release fijo de azu-mod-maker (reemplaza el anterior)
-subir_a_release() {
-  local ruta="$1"
-  if ! gh release view "$RELEASE_TAG" -R "$MOD_SLUG" >/dev/null 2>&1; then
-    gh release create "$RELEASE_TAG" -R "$MOD_SLUG" --target main \
+# Sube un archivo grande a un Release fijo del repo (reemplaza el anterior)
+subir_a_release() { # $1=slug  $2=ruta
+  local slug="$1" ruta="$2"
+  if ! gh release view "$RELEASE_TAG" -R "$slug" >/dev/null 2>&1; then
+    gh release create "$RELEASE_TAG" -R "$slug" --target main \
       --title "Ejecutables" \
-      --notes "Ejecutables grandes, actualizados automaticamente por subir_a_github.sh" >/dev/null || return 1
+      --notes "Ejecutables, actualizados automaticamente por subir_a_github.sh" >/dev/null || return 1
   fi
-  gh release upload "$RELEASE_TAG" "$ruta" -R "$MOD_SLUG" --clobber
+  gh release upload "$RELEASE_TAG" "$ruta" -R "$slug" --clobber
 }
 
-# Baja los ejecutables de GitHub Actions y los deja en org-web/files/mods
-bajar_ejecutables() {
+# Descomprime un zip (unzip o, si no hay, python3)
+descomprimir() {
+  if command -v unzip >/dev/null 2>&1; then
+    unzip -oq "$1" -d "$2"
+  else
+    python3 -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])" "$1" "$2"
+  fi
+}
+
+# id|repo|artifact|archivos|destino   (destino: auto = web si pesa poco, release = siempre al Release)
+APPS=(
+  "azu-mod-maker|$GH_USER/azu-mod-maker|AzuModification-Todos|AzuModificationLin AzuModificationWin.exe AzuModificationMac.zip|auto"
+  "acidmodloader|$GH_USER/acidmodloader|AcidModLoader-Win|AcidModLoaderWin.zip|release"
+)
+
+declare -A RUN_ID PUSH_OK
+
+# Lanza el workflow de una app y guarda el numero de run
+lanzar_build() { # $1=id $2=slug
+  local id="$1" slug="$2" before run_id="" i
+  echo
+  echo "[$id] Lanzando el build en GitHub Actions..."
+  before=$(gh run list -R "$slug" -w build.yml -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null)
+  gh workflow run build.yml -R "$slug" --ref main \
+    || { echo "[ERROR] No pude lanzar el workflow de $id (esta .github/workflows/build.yml subido?)."; return 1; }
+  for i in $(seq 1 30); do
+    sleep 3
+    run_id=$(gh run list -R "$slug" -w build.yml -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null)
+    [ -n "$run_id" ] && [ "$run_id" != "$before" ] && break
+    run_id=""
+  done
+  [ -z "$run_id" ] && { echo "[ERROR] No aparecio el build de $id en GitHub."; return 1; }
+  RUN_ID[$id]="$run_id"
+  echo "[$id] Build #$run_id en marcha."
+}
+
+# Baja los ejecutables de un run y los publica segun el destino
+recoger_ejecutables() { # $1=id $2=slug $3=artifact $4=archivos $5=destino $6=run_id $7=esperar(1|0)
+  local id="$1" slug="$2" artifact="$3" archivos="$4" destino="$5" run_id="$6" esperar="$7"
+
   echo
   echo "========================================"
-  echo "  Ejecutables -> $MODS_DEST"
+  echo "  Ejecutables de $id"
   echo "========================================"
 
-  [ -d "$ORG_DIR" ] || { echo "[ERROR] No existe $ORG_DIR"; return 1; }
-
-  local def=2
-  [ "$AZU_OK" -eq 1 ] && def=1
-  echo
-  echo "  [1] Compilar de nuevo en GitHub y bajar   (tarda unos 10-15 min)"
-  echo "  [2] Bajar el ultimo build exitoso         (rapido)"
-  echo "  [N] Saltar"
-  echo
-  local OPT run_id before i
-  read -rp "Elige 1, 2 o N (Enter = $def): " OPT
-  [ -z "$OPT" ] && OPT=$def
-
-  case "${OPT,,}" in
-    1)
-      before=$(gh run list -R "$MOD_SLUG" -w build.yml -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null)
-      echo "Lanzando el build en GitHub Actions..."
-      gh workflow run build.yml -R "$MOD_SLUG" --ref main || { echo "[ERROR] No pude lanzar el workflow (esta build.yml subido?)."; return 1; }
-      run_id=""
-      for i in $(seq 1 30); do
-        sleep 3
-        run_id=$(gh run list -R "$MOD_SLUG" -w build.yml -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null)
-        [ -n "$run_id" ] && [ "$run_id" != "$before" ] && break
-        run_id=""
-      done
-      [ -z "$run_id" ] && { echo "[ERROR] No aparecio el build en GitHub."; return 1; }
-      echo "Build #$run_id en marcha. Esperando a que termine (Ctrl+C para cortar)..."
-      gh run watch "$run_id" -R "$MOD_SLUG" --exit-status >/dev/null 2>&1 \
-        && echo "[OK] Build terminado." \
-        || echo "[!] Algun job fallo; intento bajar lo que haya."
-      ;;
-    2)
-      run_id=$(gh run list -R "$MOD_SLUG" -w build.yml -s success -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null)
-      [ -z "$run_id" ] && { echo "[ERROR] No hay ningun build exitoso. Usa la opcion 1."; return 1; }
-      echo "Usando el build #$run_id"
-      ;;
-    *)
-      echo "Saltado."
-      return 1
-      ;;
-  esac
+  if [ "$esperar" -eq 1 ]; then
+    echo "Esperando a que termine el build #$run_id (Ctrl+C para cortar)..."
+    gh run watch "$run_id" -R "$slug" --exit-status >/dev/null 2>&1 \
+      && echo "[OK] Build terminado." \
+      || {
+        echo "[!] Algun job fallo. Ultimas lineas del error:"
+        echo "----------------------------------------"
+        gh run view "$run_id" -R "$slug" --log-failed 2>/dev/null | tail -n 40
+        echo "----------------------------------------"
+        echo "(Copia esto si necesitas ayuda. Intento bajar lo que haya.)"
+      }
+  else
+    echo "Usando el build #$run_id"
+  fi
 
   local tmp
   tmp=$(mktemp -d)
   echo "Descargando ejecutables..."
-  gh run download "$run_id" -R "$MOD_SLUG" -n AzuModification-Todos -D "$tmp" \
-    || { echo "[ERROR] No se pudo bajar el artifact AzuModification-Todos."; rm -rf "$tmp"; return 1; }
+  gh run download "$run_id" -R "$slug" -n "$artifact" -D "$tmp" \
+    || { echo "[ERROR] No se pudo bajar el artifact $artifact."; rm -rf "$tmp"; return 1; }
 
-  local z
-  z=$(find "$tmp" -maxdepth 2 -name '*.zip' | head -n 1)
-  [ -z "$z" ] && { echo "[ERROR] El artifact no trae ningun zip."; rm -rf "$tmp"; return 1; }
-  mkdir -p "$tmp/out"
-  descomprimir "$z" "$tmp/out" || { echo "[ERROR] No pude descomprimir $z"; rm -rf "$tmp"; return 1; }
+  # Si el artifact trae un zip con su propio nombre, se abre (asi llega el de azu-mod-maker)
+  [ -f "$tmp/$artifact.zip" ] && descomprimir "$tmp/$artifact.zip" "$tmp/out"
 
-  mkdir -p "$MODS_DEST"
-  local f ruta mb copiados=0 enrelease=0
-  for f in AzuModificationLin AzuModificationWin.exe AzuModificationMac.zip; do
-    ruta=$(find "$tmp/out" -name "$f" -type f | head -n 1)
+  local f ruta mb ok=0
+  for f in $archivos; do
+    ruta=$(find "$tmp" -name "$f" -type f | head -n 1)
     if [ -z "$ruta" ]; then
       echo "  [falta]   $f (ese build no lo genero)"
       continue
     fi
     mb=$(( $(stat -c%s "$ruta") / 1024 / 1024 ))
-    if [ "$mb" -ge "$LIMITE_MB" ]; then
-      echo "  [GRANDE]  $f pesa ${mb} MB: va al Release '$RELEASE_TAG' (el repo no admite mas de 100 MB)."
+    if [ "$destino" = "release" ] || [ "$mb" -ge "$LIMITE_MB" ]; then
       rm -f "$MODS_DEST/$f"      # que no quede una copia vieja/rota en la web
-      if subir_a_release "$ruta"; then
-        echo "  [OK]      $f subido al Release: https://github.com/$MOD_SLUG/releases/download/$RELEASE_TAG/$f"
-        enrelease=$((enrelease+1))
+      if subir_a_release "$slug" "$ruta"; then
+        echo "  [OK]      $f (${mb} MB) -> https://github.com/$slug/releases/download/$RELEASE_TAG/$f"
+        ok=$((ok+1))
       else
         echo "  [ERROR]   No pude subir $f al Release."
       fi
-      continue
+    else
+      mkdir -p "$MODS_DEST"
+      cp -f "$ruta" "$MODS_DEST/$f" && echo "  [OK]      $f (${mb} MB) -> files/mods/" && ok=$((ok+1)) && COPIADO_A_WEB=1
     fi
-    cp -f "$ruta" "$MODS_DEST/$f" && echo "  [OK]      $f (${mb} MB)" && copiados=$((copiados+1))
   done
 
-  # Nombres viejos que ya no usa el index.html
-  rm -f "$MODS_DEST/AzuModification.exe" "$MODS_DEST/AzuModification-linux-x64"
+  # Nombres viejos de AzuModification que ya no usa el index.html
+  [ "$id" = "azu-mod-maker" ] && rm -f "$MODS_DEST/AzuModification.exe" "$MODS_DEST/AzuModification-linux-x64"
 
   rm -rf "$tmp"
-  [ $((copiados + enrelease)) -gt 0 ]
+  [ "$ok" -gt 0 ]
 }
-
-# --- Argumentos ---
-FILTRO=""
-SOLO_EXE=0
-for a in "$@"; do
-  case "$a" in
-    --exe|exe|ejecutables) SOLO_EXE=1 ;;
-    *) FILTRO="$a" ;;
-  esac
-done
-quiere() { [ -z "$FILTRO" ] || [[ "$1" == *"$FILTRO"* ]]; }
-datos_repo() { local e; for e in "${REPOS[@]}"; do [[ "$e" == "$1|"* ]] && { echo "$e"; return; }; done; }
 
 RESUMEN=()
 HAY_FALLOS=0
-AZU_OK=0
 registrar() { # $1=0|1 (rc)  $2=texto
   if [ "$1" -eq 0 ]; then RESUMEN+=("  [OK]     $2"); else RESUMEN+=("  [FALLO]  $2"); HAY_FALLOS=1; fi
 }
 
-# 1) azu-mod-maker
-if [ "$SOLO_EXE" -eq 0 ] && quiere "azu-mod-maker"; then
-  IFS='|' read -r n d u <<< "$(datos_repo azu-mod-maker)"
-  subir_repo "$n" "$d" "$u"; rc=$?
-  [ "$rc" -eq 0 ] && AZU_OK=1
-  registrar "$rc" "$n"
+# 1) Push de las apps
+if [ "$SOLO_EXE" -eq 0 ]; then
+  for id in azu-mod-maker acidmodloader; do
+    if quiere "$id"; then
+      IFS='|' read -r n d u <<< "$(datos_repo "$id")"
+      subir_repo "$n" "$d" "$u"; rc=$?
+      [ "$rc" -eq 0 ] && PUSH_OK[$id]=1
+      registrar "$rc" "$n"
+    fi
+  done
 fi
 
-# 2) Ejecutables de GitHub Actions -> org-web/files/mods
+# 2) Ejecutables de GitHub Actions
+SEL=()
 if [ "$SOLO_EXE" -eq 1 ] || [ -z "$FILTRO" ]; then
-  bajar_ejecutables; rc=$?
-  registrar "$rc" "Ejecutables -> files/mods"
+  for e in "${APPS[@]}"; do
+    id="${e%%|*}"
+    quiere "$id" && SEL+=("$e")
+  done
+fi
+
+if [ "${#SEL[@]}" -gt 0 ]; then
+  def=1
+  for e in "${SEL[@]}"; do [ -z "${PUSH_OK[${e%%|*}]}" ] && def=2; done
+  echo
+  echo "========================================"
+  echo "  Ejecutables: ${SEL[*]%%|*}"
+  echo "========================================"
+  echo
+  echo "  [1] Compilar de nuevo en GitHub y bajar   (tarda unos 10-15 min)"
+  echo "  [2] Bajar el ultimo build exitoso         (rapido)"
+  echo "  [N] Saltar"
+  echo
+  read -rp "Elige 1, 2 o N (Enter = $def): " OPT
+  [ -z "$OPT" ] && OPT=$def
+
+  case "${OPT,,}" in
+    1|2)
+      # Fase A: lanzar todos los builds a la vez para no esperar uno tras otro
+      if [ "$OPT" = "1" ]; then
+        for e in "${SEL[@]}"; do
+          IFS='|' read -r id slug artifact archivos destino <<< "$e"
+          if [ -n "${FALTAN[$id]}" ]; then
+            echo
+            echo "[$id] No lanzo el build: faltan en GitHub -> ${FALTAN[$id]}"
+            registrar 1 "Ejecutables de $id (faltan archivos: ${FALTAN[$id]})"
+            continue
+          fi
+          lanzar_build "$id" "$slug" || registrar 1 "Ejecutables de $id (no se pudo lanzar)"
+        done
+      fi
+      # Fase B: esperar, bajar y publicar
+      for e in "${SEL[@]}"; do
+        IFS='|' read -r id slug artifact archivos destino <<< "$e"
+        if [ "$OPT" = "1" ]; then
+          run_id="${RUN_ID[$id]}"; esperar=1
+          [ -z "$run_id" ] && continue
+        else
+          run_id=$(gh run list -R "$slug" -w build.yml -s success -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null)
+          esperar=0
+          if [ -z "$run_id" ]; then
+            echo "[ERROR] $id no tiene ningun build exitoso. Usa la opcion 1."
+            registrar 1 "Ejecutables de $id"
+            continue
+          fi
+        fi
+        recoger_ejecutables "$id" "$slug" "$artifact" "$archivos" "$destino" "$run_id" "$esperar"
+        registrar $? "Ejecutables de $id"
+      done
+      ;;
+    *)
+      echo "Ejecutables saltados."
+      ;;
+  esac
 fi
 
 # 3) org-web
-if [ "$SOLO_EXE" -eq 1 ] || quiere "org-web"; then
+if [ "$SOLO_EXE" -eq 1 ] || [ "$COPIADO_A_WEB" -eq 1 ] || quiere "org-web"; then
   IFS='|' read -r n d u <<< "$(datos_repo org-web)"
   subir_repo "$n" "$d" "$u"; rc=$?
   registrar "$rc" "$n"
