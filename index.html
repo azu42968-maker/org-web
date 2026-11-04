@@ -8,7 +8,7 @@
   <title>Acid | Org</title>
   <link rel="icon" type="image/webp" href="files/acid-mark-transparent.webp">
   <link rel="preload" as="image" href="files/assets/acid-alt-banner.webp" fetchpriority="high">
-  <link rel="stylesheet" href="files/styles_R5Bk.css?v=1">
+  <link rel="stylesheet" href="files/styles_R5Bk.css?v=5">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Wet+Paint&family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap"><style>
 #staff li span[style*="linear-gradient"],#staff h3[style*="linear-gradient"]{background-size:200% 100% !important;animation:acidRoleFlow 5s linear infinite}
 @keyframes acidRoleFlow{from{background-position:0% 50%}to{background-position:200% 50%}}
@@ -35,7 +35,7 @@
       <a href="#partners" data-tab="partners" role="tab" aria-selected="false" class="">Partners</a>
       <a href="#faq" data-tab="faq" role="tab" aria-selected="false" class="">FAQs</a>
       <a href="#about" data-tab="about" role="tab" aria-selected="false" class="">About</a>
-      <span class="store-link" aria-disabled="true">Coming soon</span>
+      <a class="store-link" href="#ix" data-tab="ix" role="tab" aria-selected="false" aria-label="The IX Realms" title="The IX Realms"><img src="files/assets/ix-mark.webp" alt="IX"></a>
     </nav>
   </header>
 
@@ -679,6 +679,106 @@
       <div class="about-copy"><p class="kicker">What is Acid?</p><h2 id="about-title">Ambition.<br>Competition.<br>Dedication.</h2><p>Acid is a rising organization forged in Brawlhalla and now branching into new titles, content, and entertainment. It unites players, creators, allied clans, and fans under one banner, built on ambition, competition, and dedication.</p><p>With 1 tournament medal already earned and a Discord community surpassing 2,000 members, Acid keeps laying the groundwork for long-term competitive and creative growth.</p></div>
       <div class="community-card"><p>Join the community</p><h3>Find teammates.<br>Follow the run.</h3><a class="button dark" href="https://discord.gg/acidbh" target="_blank" rel="noopener">Join Discord ↗</a><a class="community-link" href="https://x.com/acidesportsbh" target="_blank" rel="noopener">Follow @acidesportsbh</a></div>
     </section>
+  <section id="ix" class="ix-root" data-tab-panel="ix" data-view="home" aria-label="The IX Realms" aria-hidden="true" hidden>
+<div class="ix-bg" aria-hidden="true"><i class="ix-bg-img"></i><i class="ix-bg-wash"></i><i class="ix-bg-shade"></i></div>
+
+  <header class="ix-site-header" id="ix-top">
+    <a class="ix-brand" href="#ix" data-tab-link="ix" aria-label="The IX Realms home">
+      <span class="ix-brand-mark"><img src="files/assets/ix-mark.webp" alt=""></span>
+      <span class="ix-brand-text"><strong>IX REALMS</strong></span>
+    </a>
+    <button class="ix-menu-toggle" aria-expanded="false" aria-controls="ix-nav" aria-label="Menu"><span></span><span></span></button>
+    <nav id="ix-nav" aria-label="Main navigation" role="tablist">
+      <a href="#ix" data-tab-link="ix" data-ix-link="home" role="tab" aria-selected="true" class="ix-active">Home</a>
+      <a href="#ix-socials" data-tab-link="ix-socials" data-ix-link="socials" role="tab" aria-selected="false">Socials</a>
+      <a href="#ix-about" data-tab-link="ix-about" data-ix-link="about" role="tab" aria-selected="false">About</a>
+      <a class="ix-acid-link" href="#home" data-tab-link="home">ACID</a>
+    </nav>
+  </header>
+
+  <div class="ix-main">
+    <!-- HOME -->
+    <section class="ix-hero ix-tab-panel" data-ix-panel="home" aria-labelledby="ix-hero-title">
+      <div class="ix-hero-rail" aria-label="IX Realms community statistics">
+        <div><strong>Oct 2026</strong><span>Established</span></div>
+      </div>
+      <div class="ix-hero-copy">
+        <img class="ix-hero-logo" src="files/assets/ix-mark.webp" alt="IX logo">
+        <p class="ix-eyebrow"><span></span> Competitive Brawlhalla League</p>
+        <h1 id="ix-hero-title">The IX <em>Realms</em></h1>
+        <p class="ix-hero-lede"><strong>Compete. Prove your skills. Rise to the top.</strong><br>Tournaments, victories and a community where there is a place for everyone, whether you are here to compete or to support others.</p>
+        <div class="ix-hero-actions">
+          <a class="ix-button ix-primary" href="https://discord.gg/v4vHDYpj4W" target="_blank" rel="noopener">Join the Discord ↗</a>
+          <a class="ix-button ix-ghost" href="#ix-socials" data-tab-link="ix-socials">Socials</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOCIALS -->
+    <section class="ix-section ix-tab-panel" data-ix-panel="socials" aria-labelledby="ix-socials-title" hidden>
+      <div class="ix-section-head">
+        <div><p class="ix-kicker">Follow the league</p><h2 id="ix-socials-title">IX Realms socials</h2></div>
+        <p class="ix-section-summary">IX REALMS | Competitive Brawlhalla League.</p>
+      </div>
+      <div class="ix-social-grid">
+        <a class="ix-glass ix-social-card" href="https://www.youtube.com/@TheIXRealms" target="_blank" rel="noopener">
+          <div class="ix-social-top"><span class="ix-social-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span><div><strong>YouTube</strong><small>@TheIXRealms</small></div></div>
+          <div class="ix-social-render"><img src="files/assets/acid-social-youtube.webp" alt="" width="150" data-ix-recolor></div>
+          <p>Match highlights, tournament VODs and league videos.</p><span class="ix-by">Watch ↗</span>
+        </a>
+        <a class="ix-glass ix-social-card" href="https://www.twitch.tv/theixrealms" target="_blank" rel="noopener">
+          <div class="ix-social-top"><span class="ix-social-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg></span><div><strong>Twitch</strong><small>theixrealms</small></div></div>
+          <div class="ix-social-render"><img src="files/assets/acid-social-twitch.webp" alt="" width="150" data-ix-recolor></div>
+          <p>Watch the league live and chat with the community.</p><span class="ix-by">Watch ↗</span>
+        </a>
+        <a class="ix-glass ix-social-card" href="https://x.com/ixrealmofficial" target="_blank" rel="noopener">
+          <div class="ix-social-top"><span class="ix-social-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></svg></span><div><strong>X</strong><small>@ixrealmofficial</small></div></div>
+          <div class="ix-social-render"><img src="files/assets/acid-social-x.webp" alt="" width="150" data-ix-recolor></div>
+          <p>News, announcements and match results.</p><span class="ix-by">Follow ↗</span>
+        </a>
+        <a class="ix-glass ix-social-card" href="https://www.tiktok.com/@ixrealmsofficial" target="_blank" rel="noopener">
+          <div class="ix-social-top"><span class="ix-social-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></span><div><strong>TikTok</strong><small>@ixrealmsofficial</small></div></div>
+          <div class="ix-social-render"><img src="files/assets/acid-social-tiktok.webp" alt="" width="150" data-ix-recolor></div>
+          <p>Short clips and best moments from the league.</p><span class="ix-by">Follow ↗</span>
+        </a>
+        <a class="ix-glass ix-social-card" href="https://www.challengermode.com/s/theixrealms" target="_blank" rel="noopener">
+          <div class="ix-social-top"><span class="ix-social-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></span><div><strong>Challengermode</strong><small>theixrealms</small></div></div>
+          <div class="ix-social-render"><img src="files/assets/acid-social-challengermode.webp" alt="" width="150" data-ix-recolor></div>
+          <p>Our league page: follow IX Realms and keep up with events.</p><span class="ix-by">Compete ↗</span>
+        </a>
+        <a class="ix-glass ix-social-card" href="https://discord.gg/v4vHDYpj4W" target="_blank" rel="noopener">
+          <div class="ix-social-top"><span class="ix-social-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg></span><div><strong>Discord</strong><small>discord.gg/v4vHDYpj4W</small></div></div>
+          <div class="ix-social-render"><img src="files/assets/acid-social-discord.webp" alt="" width="150" data-ix-recolor></div>
+          <p>Our home for tournaments, announcements and matchmaking.</p><span class="ix-by">Join ↗</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="ix-section ix-tab-panel" data-ix-panel="about" aria-labelledby="ix-about-title" hidden>
+      <div class="ix-about-grid">
+        <div class="ix-glass ix-about-copy">
+          <p class="ix-kicker">What is IX Realms?</p>
+          <h2 id="ix-about-title">Compete.<br>Prove.<br>Rise.</h2>
+          <p>The IX Realms is a competitive Brawlhalla league where players compete in tournaments, prove their skills, earn victories, and rise to the top. Whether you're here to compete or support others, there's a place for you.</p>
+          <p>Established in October 2026, the league lives on Discord, streams on Twitch and runs its events on Challengermode.</p>
+        </div>
+        <div class="ix-glass ix-acid-card">
+          <p class="ix-kicker">Operated by</p>
+          <h3>ACID Esports</h3>
+          <p>The IX Realms is run and operated by ACID Esports.</p>
+          <div><a class="ix-button ix-ghost" href="#home" data-tab-link="home">Visit ACID ↗</a></div>
+        </div>
+      </div>
+      <div class="ix-about-banner" role="img" aria-label="IX Realms banner"></div>
+    </section>
+  </div>
+
+  <div class="ix-footer">
+    <div class="ix-footer-brand"><img src="files/assets/ix-mark.webp" alt=""><strong>IX REALMS</strong></div>
+    <p>© 2026 The IX Realms · Operated by <a href="#home" data-tab-link="home">ACID Esports</a></p>
+  </div>
+  </section>
   </main>
 
   <footer>
@@ -806,7 +906,7 @@
   })();
   </script>
 
-  <script src="files/app_R5Bk.js?v=3"></script>
+  <script src="files/app_R5Bk.js?v=6"></script>
   <script src="files/roster-stats_R5Bk.js?v=3"></script>
 
   <script>
