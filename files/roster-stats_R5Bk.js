@@ -10,7 +10,7 @@
     });
   }
   var loadFailed = false;
-  var SIGNED_IDS = [ 60698133, 52610289, 113624741, 9921820, 119039128, 86571991, 88008517, 92980284, 129887481, 137630156, 38023342, 77600655, 129916264, 57589683 ];
+  var SIGNED_IDS = [ 52610289, 113624741, 9921820, 119039128, 86571991, 88008517, 92980284, 129887481, 137630156, 38023342, 77600655, 129916264, 57589683 ];
   var ALT_ACCOUNTS = {
     42483385: [ 53543934 ],
     128059064: [ 13017446 ]
@@ -733,7 +733,7 @@
     var h = '<div class="pc">';
     h += '<span class="pc-drips" aria-hidden="true"><i></i><i></i><i></i><i></i></span>';
     h += '<button class="pc-close" type="button" aria-label="Close">✕</button>';
-    h += '<div class="pc-top"><span class="pc-chip">Acid roster</span><span class="pc-date"><b>' + esc(region) + "</b> Stats · " + esc(updated) + "</span></div>";
+    h += '<div class="pc-top"><span class="pc-chip">Acid roster</span><span class="pc-meta"><span class="pc-date"><b>' + esc(region) + "</b> Stats · " + esc(updated) + '</span><span class="pc-id">ID · <b>' + esc(p.brawlhalla_id) + "</b></span></span></div>";
     h += '<div class="pc-bgname" aria-hidden="true">' + esc(shownName) + "</div>";
     if (d && d.earnings !== null && d.earnings !== undefined) {
       h += '<div class="pc-earn"><span>Career earnings</span><strong>$' + Number(d.earnings).toLocaleString("en") + "</strong></div>";
@@ -802,6 +802,11 @@
       signedSet[id] = true;
     });
     var pendingSignedLookups = {};
+    var tickerExtra = {};
+    var rosterPromise = null;
+    function ensureRoster() {
+      return rosterPromise || (rosterPromise = loadRoster());
+    }
     var renderTimer = null;
     function scheduleRender() {
       if (renderTimer) return;
@@ -810,6 +815,35 @@
         renderTable();
         renderSigned();
       }, 300);
+    }
+    function renderTicker() {
+      var track = document.querySelector(".ticker-track");
+      if (!track) return;
+      var byId = {};
+      Object.keys(tickerExtra).forEach(function(k) {
+        byId[k] = tickerExtra[k];
+      });
+      ROSTER.forEach(function(p) {
+        byId[p.brawlhalla_id] = p;
+      });
+      var names = [];
+      SIGNED_IDS.forEach(function(id) {
+        var p = byId[id];
+        if (!p || isBlockedName(p.name)) return;
+        var n = String(p.name || "").replace(/^\s*acd\s*\|\s*/i, "").trim();
+        if (n && names.indexOf(n) === -1) names.push(n);
+      });
+      if (!names.length) return;
+      var key = names.join("|");
+      if (track.getAttribute("data-key") === key) return;
+      track.setAttribute("data-key", key);
+      var items = names.slice();
+      while (items.length < 12) items = items.concat(names);
+      var half = items.map(function(n) {
+        return "<span>" + esc(n) + " · Signed</span><i></i>";
+      }).join("");
+      track.innerHTML = half + half.replace(/<span>/g, '<span aria-hidden="true">').replace(/<i><\/i>/g, '<i aria-hidden="true"></i>');
+      track.style.animationDuration = Math.max(26, items.length * 2.4) + "s";
     }
     function renderSigned() {
       var section = document.getElementById("signed-section");
@@ -862,6 +896,7 @@
         grid.appendChild(card);
       });
       section.hidden = false;
+      renderTicker();
     }
     function renderTable() {
       var q = (searchEl.value || "").trim().toLowerCase();
@@ -1072,12 +1107,30 @@
     function start() {
       if (started) return;
       started = true;
-      loadRoster().then(function() {
+      ensureRoster().then(function() {
         renderSigned();
         renderTable();
         refreshLiveStats();
       });
     }
+    // Franja del menu principal: carga ligera (solo nombres de los signed), sin esperar a la pestana Players
+    function startTicker() {
+      if (!document.querySelector(".ticker-track")) return;
+      ensureRoster().then(function() {
+        renderTicker();
+        SIGNED_IDS.forEach(function(id) {
+          var known = ROSTER.some(function(p) {
+            return p.brawlhalla_id === id;
+          });
+          if (known || tickerExtra[id]) return;
+          fetchLiveForRoster(id).then(function(entry) {
+            tickerExtra[id] = entry;
+            renderTicker();
+          }).catch(function() {});
+        });
+      });
+    }
+    startTicker();
     var section = document.getElementById("roster");
     if (!section || !section.hidden) {
       start();
